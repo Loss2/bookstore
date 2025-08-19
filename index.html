@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookVerse | Книжный магазин</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background-color: #f9fafb;
+        }
+
+        /* Навигация */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: rgba(255, 255, 255, 0.95);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4f46e5;
+        }
+
+        .nav-brand i {
+            font-size: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #1f2937;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #4f46e5;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-cart, .btn-search {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            position: relative;
+            color: #1f2937;
+            transition: color 0.3s;
+        }
+
+        .btn-cart:hover, .btn-search:hover {
+            color: #4f46e5;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #4f46e5;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Герой секция */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            margin-top: 60px;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .search-bar {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .search-bar button {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .search-bar button:hover {
+            background: #e69008;
+        }
+
+        /* Категории */
+        .categories {
+            padding: 3rem 5%;
+            background: white;
+        }
+
+        .categories h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            color: #1f2937;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .category-card {
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            background: #e0e7ff;
+        }
+
+        .category-card i {
+            font-size: 2.5rem;
+            color: #4f46e5;
+            margin-bottom: 1rem;
+        }
+
+        .category-card h3 {
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-card p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        /* Книги */
+        .books-section {
+            padding: 3rem 5%;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            color: #1f2937;
+        }
+
+        .view-all {
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .book-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .book-image {
+            height: 300px;
+            overflow: hidden;
+        }
+
+        .book-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .book-info {
+            padding: 1.5rem;
+        }
+
+        .book-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #1f2937;
+        }
+
+        .book-author {
+            color: #6b7280;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .price {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #4f46e5;
+            margin-bottom: 1rem;
+        }
+
+        .book-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-details, .btn-buy {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-details {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+
+        .btn-details:hover {
+            background: #d1d5db;
+        }
+
+        .btn-buy {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-buy:hover {
+            background: #4338ca;
+        }
+
+        /* Преимущества */
+        .features {
+            padding: 4rem 5%;
+            background: #f8fafc;
+            text-align: center;
+        }
+
+        .features h2 {
+            margin-bottom: 3rem;
+            font-size: 2rem;
+            color: #1f2937;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature {
+            padding: 2rem;
+        }
+
+        .feature i {
+            font-size: 3rem;
+            color: #4f46e5;
+            margin-bottom: 1rem;
+        }
+
+        .feature h3 {
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+
+        .feature p {
+            color: #6b7280;
+        }
+
+        /* Футер */
+        footer {
+            background: #1f2937;
+            color: white;
+            padding: 3rem 5% 1rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3,
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .footer-section a {
+            display: block;
+            color: #d1d5db;
+            text-decoration: none;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .subscribe-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .subscribe-form input {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .subscribe-form button {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 0.8rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #374151;
+            color: #9ca3af;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .search-bar {
+                flex-direction: column;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-book-open"></i>
+            <span>BookVerse</span>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="active">Главная</a>
+            <a href="#">Категории</a>
+            <a href="#">Бестселлеры</a>
+            <a href="#">Новинки</a>
+            <a href="#">Акции</a>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-cart">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </button>
+            <button class="btn-search">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Герой секция -->
+    <header class="hero">
+        <h1>Откройте мир бесконечных историй</h1>
+        <p>Более 10,000 книг на любой вкус. Находите свои следующие любимые произведения!</p>
+        <div class="search-bar">
+            <input type="text" placeholder="Поиск по названию, автору или жанру...">
+            <button><i class="fas fa-search"></i> Найти</button>
+        </div>
+    </header>
+
+    <!-- Категории -->
+    <section class="categories">
+        <h2>Популярные категории</h2>
+        <div class="categories-grid">
+            <div class="category-card">
+                <i class="fas fa-dragon"></i>
+                <h3>Фэнтези</h3>
+                <p>1,245 книг</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-rocket"></i>
+                <h3>Фантастика</h3>
+                <p>892 книги</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-heart"></i>
+                <h3>Роман</h3>
+                <p>1,567 книг</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-search"></i>
+                <h3>Детектив</h3>
+                <p>734 книги</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-graduation-cap"></i>
+                <h3>Классика</h3>
+                <p>2,134 книги</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Бестселлеры -->
+    <section class="books-section">
+        <div class="section-header">
+            <h2>Бестселлеры</h2>
+            <a href="#" class="view-all">Смотреть все →</a>
+        </div>
+        <div class="books-grid">
+            <div class="book-card">
+                <div class="book-image">
+                    <img src="https://picsum.photos/300/400?random=1" alt="Обложка книги">
+                </div>
+                <div class="book-info">
+                    <h3>Мастер и Маргарита</h3>
+                    <p class="book-author">Михаил Булгаков</p>
+                    <p class="price">599 ₽</p>
+                    <div class="book-actions">
+                        <button class="btn-details">Подробнее</button>
+                        <button class="btn-buy">Купить</button>
+                    </div>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-image">
+                    <img src="https://picsum.photos/300/400?random=2" alt="Обложка книги">
+                </div>
+                <div class="book-info">
+                    <h3>1984</h3>
+                    <p class="book-author">Джордж Оруэлл</p>
+                    <p class="price">650 ₽</p>
+                    <div class="book-actions">
+                        <button class="btn-details">Подробнее</button>
+                        <button class="btn-buy">Купить</button>
+                    </div>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-image">
+                    <img src="https://picsum.photos/300/400?random=3" alt="Обложка книги">
+                </div>
+                <div class="book-info">
+                    <h3>Гарри Поттер и философский камень</h3>
+                    <p class="book-author">Джоан Роулинг</p>
+                    <p class="price">899 ₽</p>
+                    <div class="book-actions">
+                        <button class="btn-details">Подробнее</button>
+                        <button class="btn-buy">Купить</button>
+                    </div>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-image">
+                    <img src="https://picsum.photos/300/400?random=4" alt="Обложка книги">
+                </div>
+                <div class="book-info">
+                    <h3>Преступление и наказание</h3>
+                    <p class="book-author">Фёдор Достоевский</p>
+                    <p class="price">550 ₽</p>
+                    <div class="book-actions">
+                        <button class="btn-details">Подробнее</button>
+                        <button class="btn-buy">Купить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Новинки -->
+    <section class="books-section">
+        <div class="section-header">
+            <h2>Новые поступления</h2>
+            <a href="#" class="view-all">Смотреть все →</a>
+        </div>
+        <div class="books-grid">
+            <div class="book-card">
+                <div class="book-image">
+                    <img src="https://picsum.photos/300/400?random=5" alt="Обложка книги">
+                </div>
+                <div class="book-info">
+                    <h3>Дюна</h3>
+                    <p class="book-author">Фрэнк Герберт</p>
+                    <p class="price">680 ₽</p>
+                    <div class="book-actions">
+                        <button class="btn-details">Подробнее</button>
+                        <button class="btn-buy">Купить</button>
+                    </div>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-image">
+                    <img src="https://picsum.photos/300/400?random=6" alt="Обложка книги">
+                </div>
+                <div class="book-info">
+                    <h3>Три товарища</h3>
+                    <p class="book-author">Эрих Мария Ремарк</p>
+                    <p class="price">610 ₽</p>
+                    <div class="book-actions">
+                        <button class="btn-details">Подробнее</button>
+                        <button class="btn-buy">Купить</button>
+                    </div>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-image">
+                    <img src="https://picsum.photos/300/400?random=7" alt="Обложка книги">
+                </div>
+                <div class="book-info">
+                    <h3>Игра престолов</h3>
+                    <p class="book-author">Джордж Р.Р. Мартин</p>
+                    <p class="price">890 ₽</p>
+                    <div class="book-actions">
+                        <button class="btn-details">Подробнее</button>
+                        <button class="btn-buy">Купить</button>
+                    </div>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-image">
+                    <img src="https://picsum.photos/300/400?random=8" alt="Обложка книги">
+                </div>
+                <div class="book-info">
+                    <h3>Анна Каренина</h3>
+                    <p class="book-author">Лев Толстой</p>
+                    <p class="price">580 ₽</p>
+                    <div class="book-actions">
+                        <button class="btn-details">Подробнее</button>
+                        <button class="btn-buy">Купить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Преимущества -->
+    <section class="features">
+        <h2>Почему выбирают нас</h2>
+        <div class="features-grid">
+            <div class="feature">
+                <i class="fas fa-truck"></i>
+                <h3>Бесплатная доставка</h3>
+                <p>Бесплатная доставка при заказе от 2000 ₽ по всей России</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Гарантия качества</h3>
+                <p>Все книги от проверенных издательств с гарантией качества</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-headset"></i>
+                <h3>Поддержка 24/7</h3>
+                <p>Круглосуточная поддержка клиентов по всем вопросам</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-undo"></i>
+                <h3>Легкий возврат</h3>
+                <p>Возврат в течение 30 дней без лишних вопросов</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>BookVerse</h3>
+                <p>Ваш надежный партнер в мире литературы с 2010 года</p>
+            </div>
+            <div class="footer-section">
+                <h4>Категории</h4>
+                <a href="#">Фэнтези</a>
+                <a href="#">Научная фантастика</a>
+                <a href="#">Детективы</a>
+                <a href="#">Романы</a>
+                <a href="#">Классика</a>
+            </div>
+            <div class="footer-section">
+                <h4>Помощь</h4>
+                <a href="#">Доставка</a>
+                <a href="#">Оплата</a>
+                <a href="#">Возврат</a>
+                <a href="#">Контакты</a>
+                <a href="#">FAQ</a>
+            </div>
+            <div class="footer-section">
+                <h4>Подписка</h4>
+                <p>Получайте первыми информацию о новинках и скидках</p>
+                <div class="subscribe-form">
+                    <input type="email" placeholder="Ваш email">
+                    <button>Подписаться</button>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 BookVerse. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Простой JavaScript для демонстрации
+        document.addEventListener('DOMContentLoaded', function() {
+            // Добавление товаров в корзину
+            const buyButtons = document.querySelectorAll('.btn-buy');
+            const cartCount = document.querySelector('.cart-count');
+            let count = 0;
+
+            buyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    count++;
+                    cartCount.textContent = count;
+                    alert('Товар добавлен в корзину!');
+                });
+            });
+
+            // Поиск
+            const searchButton = document.querySelector('.search-bar button');
+            searchButton.addEventListener('click', function() {
+                const searchInput = document.querySelector('.search-bar input');
+                alert('Поиск: ' + searchInput.value);
+            });
+        });
+    </script>
+</body>
+</html>
