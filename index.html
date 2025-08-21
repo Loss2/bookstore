@@ -489,10 +489,15 @@
     <section class="categories">
         <h2>Популярные категории</h2>
         <div class="categories-grid">
-            <div class="category-card">
+        <div class="category-card" onclick="window.location.href='https://example.com';">
                 <i class="fas fa-dragon"></i>
                 <h3>Фэнтези</h3>
                 <p>1,245 книг</p>
+                <!-- Новая кнопка-заглушка -->
+            <button class="btn-buy" style="margin-top: 10px; width: 100%;" 
+                    onclick="event.stopPropagation(); alert('Функция в разработке');">
+                Перейти к выбору
+            </button>
             </div>
             <div class="category-card">
                 <i class="fas fa-rocket"></i>
