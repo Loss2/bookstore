@@ -7,6 +7,37 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/ak_container.js?id=MXw0" ></script>
 <script>
+/* TEMP PATCH — экранируем селекторы вида "#123" -> "#\31 23" */
+(function(){
+  const escNumericId = (sel) => {
+    if (typeof sel !== 'string') return sel;
+    const m = sel.match(/^#(\d+)$/);
+    if (!m) return sel;
+    const s = m[1];
+    // первая цифра экранируется как \3<digit> + пробел
+    return '#\\3' + s[0] + (s.length > 1 ? ' ' + s.slice(1) : ' ');
+  };
+  const wrap = (proto, name) => {
+    const orig = proto[name];
+    Object.defineProperty(proto, name, {
+      configurable: true, writable: true,
+      value: function(sel){
+        try { return orig.call(this, sel); }
+        catch (e) {
+          const fixed = escNumericId(sel);
+          if (fixed !== sel) return orig.call(this, fixed);
+          throw e;
+        }
+      }
+    });
+  };
+  wrap(Document.prototype, 'querySelector');
+  wrap(Document.prototype, 'querySelectorAll');
+  wrap(Element.prototype,  'querySelector');
+  wrap(Element.prototype,  'querySelectorAll');
+})();
+</script>
+<script>
     (function (window, document, dataLayerName, containerID) {
         window[dataLayerName] = window[dataLayerName] || [];
         window[dataLayerName].push({ 'start': new Date().getTime(), event: 'actm-js' });
