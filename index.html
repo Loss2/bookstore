@@ -53,6 +53,68 @@
     }(window, document, 'acDataLayer', 'ATM-484uAZEXfQdxQnFr6'));
 </script>
     <style>
+        /* Стили для кнопки переключения языка */
+        .language-switcher {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .btn-lang {
+            background: none;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #1f2937;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-lang:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+        
+        .lang-options {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            min-width: 120px;
+            margin-top: 5px;
+        }
+        
+        .lang-option {
+            padding: 10px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+        
+        .lang-option:hover {
+            background: #f3f4f6;
+        }
+        
+        .lang-option.active {
+            background: #e0e7ff;
+            color: #4f46e5;
+            font-weight: 600;
+        }
+        
+        .lang-options.show {
+            display: block;
+        }
+
         .modal {
     display: none;
     position: fixed;
@@ -632,6 +694,11 @@
             .categories-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+            
+            .language-switcher {
+                margin-left: auto;
+                margin-right: 10px;
+            }
         }
     </style>
 </head>
@@ -650,6 +717,23 @@
             <a href="#">Акции</a>
         </div>
         <div class="nav-actions">
+            <!-- Кнопка переключения языка -->
+            <div class="language-switcher">
+                <button class="btn-lang">
+                    <i class="fas fa-globe"></i>
+                    <span id="current-lang">Русский</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="lang-options">
+                    <div class="lang-option active" data-lang="ru">
+                        <i class="fas fa-check"></i>
+                        <span>Русский</span>
+                    </div>
+                    <div class="lang-option" data-lang="en">
+                        <span>English</span>
+                    </div>
+                </div>
+            </div>
             <button class="btn-cart">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="cart-count">0</span>
@@ -662,42 +746,42 @@
 
     <!-- Герой секция -->
     <header class="hero">
-        <h1>Откройте мир бесконечных историй</h1>
-        <p>Более 10,000 книг на любой вкус. Находите свои следующие любимые произведения!</p>
+        <h1 data-i18n="hero.title">Откройте мир бесконечных историй</h1>
+        <p data-i18n="hero.subtitle">Более 10,000 книг на любой вкус. Находите свои следующие любимые произведения!</p>
         <div class="search-bar">
-            <input type="text" placeholder="Поиск по названию, автору или жанру...">
-            <button><i class="fas fa-search"></i> Найти</button>
+            <input type="text" placeholder="Поиск по названию, автору или жанру..." data-i18n-placeholder="search.placeholder">
+            <button><i class="fas fa-search"></i> <span data-i18n="search.button">Найти</span></button>
         </div>
     </header>
 
     <!-- Категории -->
     <section class="categories">
-        <h2>Популярные категории</h2>
+        <h2 data-i18n="categories.title">Популярные категории</h2>
         <div class="categories-grid">
-       <div class="category-card" onclick="window.location.href='fantsy.html';">
+            <div class="category-card" onclick="window.location.href='fantsy.html';">
                 <i class="fas fa-dragon"></i>
-                <h3>Фэнтези</h3>
-                <p>1,245 книг</p>
+                <h3 data-i18n="categories.fantasy">Фэнтези</h3>
+                <p data-i18n="categories.fantasyCount">1,245 книг</p>
             </div>
             <div class="category-card">
                 <i class="fas fa-rocket"></i>
-                <h3>Фантастика</h3>
-                <p>892 книги</p>
+                <h3 data-i18n="categories.scifi">Фантастика</h3>
+                <p data-i18n="categories.scifiCount">892 книги</p>
             </div>
             <div class="category-card">
                 <i class="fas fa-heart"></i>
-                <h3>Роман</h3>
-                <p>1,567 книг</p>
+                <h3 data-i18n="categories.romance">Роман</h3>
+                <p data-i18n="categories.romanceCount">1,567 книг</p>
             </div>
             <div class="category-card">
                 <i class="fas fa-search"></i>
-                <h3>Детектив</h3>
-                <p>734 книги</p>
+                <h3 data-i18n="categories.detective">Детектив</h3>
+                <p data-i18n="categories.detectiveCount">734 книги</p>
             </div>
             <div class="category-card">
                 <i class="fas fa-graduation-cap"></i>
-                <h3>Классика</h3>
-                <p>2,134 книги</p>
+                <h3 data-i18n="categories.classic">Классика</h3>
+                <p data-i18n="categories.classicCount">2,134 книги</p>
             </div>
         </div>
     </section>
@@ -705,8 +789,8 @@
     <!-- Бестселлеры -->
     <section class="books-section">
         <div class="section-header">
-            <h2>Бестселлеры</h2>
-            <a href="#" class="view-all">Смотреть все →</a>
+            <h2 data-i18n="bestsellers.title">Бестселлеры</h2>
+            <a href="#" class="view-all" data-i18n="bestsellers.viewAll">Смотреть все →</a>
         </div>
         <div class="books-grid">
             <div class="book-card">
@@ -716,11 +800,11 @@
                 <div class="book-info">
                     <h3>Мастер и Маргарита</h3>
                     <p class="book-author">Михаил Булгаков</p>
-                 <p class="price">599 ₽</p>
-            <div class="book-actions">
-                   <button class="btn-details">Подробнее</button>
-                     <button class="btn-buy">Купить</button>                       
-                   </div>
+                    <p class="price">599 ₽</p>
+                    <div class="book-actions">
+                        <button class="btn-details" data-i18n="book.details">Подробнее</button>
+                        <button class="btn-buy" data-i18n="book.buy">Купить</button>
+                    </div>
                 </div>
             </div>
             
@@ -733,8 +817,8 @@
                     <p class="book-author">Джордж Оруэлл</p>
                     <p class="price">650 ₽</p>
                     <div class="book-actions">
-                        <button class="btn-details">Подробнее</button>
-                        <button class="btn-buy">Купить</button>
+                        <button class="btn-details" data-i18n="book.details">Подробнее</button>
+                        <button class="btn-buy" data-i18n="book.buy">Купить</button>
                     </div>
                 </div>
             </div>
@@ -747,8 +831,8 @@
                     <p class="book-author">Джоан Роулинг</p>
                     <p class="price">899 ₽</p>
                     <div class="book-actions">
-                        <button class="btn-details">Подробнее</button>
-                        <button class="btn-buy">Купить</button>
+                        <button class="btn-details" data-i18n="book.details">Подробнее</button>
+                        <button class="btn-buy" data-i18n="book.buy">Купить</button>
                     </div>
                 </div>
             </div>
@@ -761,8 +845,8 @@
                     <p class="book-author">Фёдор Достоевский</p>
                     <p class="price">550 ₽</p>
                     <div class="book-actions">
-                        <button class="btn-details">Подробнее</button>
-                        <button class="btn-buy">Купить</button>
+                        <button class="btn-details" data-i18n="book.details">Подробнее</button>
+                        <button class="btn-buy" data-i18n="book.buy">Купить</button>
                     </div>
                 </div>
             </div>
@@ -781,15 +865,15 @@
                     
                     <div class="rating">
                         <div class="stars">★★★★☆</div>
-                        <span class="reviews">(4.8 · 142 отзыва)</span>
+                        <span class="reviews" data-i18n="modal.reviews">(4.8 · 142 отзыва)</span>
                     </div>
                     
-                    <p class="description">Великий роман о добре и зле, любви и предательстве, происходящий в Москве 1930-х годов. Сатана лично посещает столицу, чтобы провести весенний бал полнолуния.</p>
+                    <p class="description" data-i18n="modal.description">Великий роман о добре и зле, любви и предательстве, происходящий в Москве 1930-х годов. Сатана лично посещает столицу, чтобы провести весенний бал полнолуния.</p>
                     
                     <div class="details">
-                        <p><strong>Год:</strong> 1967</p>
-                        <p><strong>Страниц:</strong> 480</p>
-                        <p><strong>Жанр:</strong> Классика, Мистика</p>
+                        <p><strong data-i18n="modal.year">Год:</strong> 1967</p>
+                        <p><strong data-i18n="modal.pages">Страниц:</strong> 480</p>
+                        <p><strong data-i18n="modal.genre">Жанр:</strong> Классика, Мистика</p>
                     </div>
                     
                     <div class="price-section">
@@ -798,8 +882,8 @@
                     </div>
                     
                     <div class="modal-actions">
-                        <button class="btn-buy">Добавить в корзину</button>
-                        <button class="btn-wishlist">♥ В избранное</button>
+                        <button class="btn-buy" data-i18n="modal.addToCart">Добавить в корзину</button>
+                        <button class="btn-wishlist" data-i18n="modal.addToWishlist">♥ В избранное</button>
                     </div>
                 </div>
             </div>
@@ -809,8 +893,8 @@
     <!-- Новинки -->
     <section class="books-section">
         <div class="section-header">
-            <h2>Новые поступления</h2>
-            <a href="#" class="view-all">Смотреть все →</a>
+            <h2 data-i18n="newArrivals.title">Новые поступления</h2>
+            <a href="#" class="view-all" data-i18n="newArrivals.viewAll">Смотреть все →</a>
         </div>
         <div class="books-grid">
             <div class="book-card">
@@ -822,8 +906,8 @@
                     <p class="book-author">Фрэнк Герберт</p>
                     <p class="price">680 ₽</p>
                     <div class="book-actions">
-                        <button class="btn-details">Подробнее</button>
-                        <button class="btn-buy">Купить</button>
+                        <button class="btn-details" data-i18n="book.details">Подробнее</button>
+                        <button class="btn-buy" data-i18n="book.buy">Купить</button>
                     </div>
                 </div>
             </div>
@@ -836,8 +920,8 @@
                     <p class="book-author">Эрих Мария Ремарк</p>
                     <p class="price">610 ₽</p>
                     <div class="book-actions">
-                        <button class="btn-details">Подробнее</button>
-                        <button class="btn-buy">Купить</button>
+                        <button class="btn-details" data-i18n="book.details">Подробнее</button>
+                        <button class="btn-buy" data-i18n="book.buy">Купить</button>
                     </div>
                 </div>
             </div>
@@ -850,8 +934,8 @@
                     <p class="book-author">Джордж Р.Р. Мартин</p>
                     <p class="price">890 ₽</p>
                     <div class="book-actions">
-                        <button class="btn-details">Подробнее</button>
-                        <button class="btn-buy">Купить</button>
+                        <button class="btn-details" data-i18n="book.details">Подробнее</button>
+                        <button class="btn-buy" data-i18n="book.buy">Купить</button>
                     </div>
                 </div>
             </div>
@@ -864,8 +948,8 @@
                     <p class="book-author">Лев Толстой</p>
                     <p class="price">580 ₽</p>
                     <div class="book-actions">
-                        <button class="btn-details">Подробнее</button>
-                        <button class="btn-buy">Купить</button>
+                        <button class="btn-details" data-i18n="book.details">Подробнее</button>
+                        <button class="btn-buy" data-i18n="book.buy">Купить</button>
                     </div>
                 </div>
             </div>
@@ -874,27 +958,27 @@
 
     <!-- Преимущества -->
     <section class="features">
-        <h2>Почему выбирают нас</h2>
+        <h2 data-i18n="features.title">Почему выбирают нас</h2>
         <div class="features-grid">
             <div class="feature">
                 <i class="fas fa-truck"></i>
-                <h3>Бесплатная доставка</h3>
-                <p>Бесплатная доставка при заказе от 2000 ₽ по всей России</p>
+                <h3 data-i18n="features.freeShipping">Бесплатная доставка</h3>
+                <p data-i18n="features.freeShippingDesc">Бесплатная доставка при заказе от 2000 ₽ по всей России</p>
             </div>
             <div class="feature">
                 <i class="fas fa-shield-alt"></i>
-                <h3>Гарантия качества</h3>
-                <p>Все книги от проверенных издательств с гарантией качества</p>
+                <h3 data-i18n="features.quality">Гарантия качества</h3>
+                <p data-i18n="features.qualityDesc">Все книги от проверенных издательств с гарантией качества</p>
             </div>
             <div class="feature">
                 <i class="fas fa-headset"></i>
-                <h3>Поддержка 24/7</h3>
-                <p>Круглосуточная поддержка клиентов по всем вопросам</p>
+                <h3 data-i18n="features.support">Поддержка 24/7</h3>
+                <p data-i18n="features.supportDesc">Круглосуточная поддержка клиентов по всем вопросам</p>
             </div>
             <div class="feature">
                 <i class="fas fa-undo"></i>
-                <h3>Легкий возврат</h3>
-                <p>Возврат в течение 30 дней без лишних вопросов</p>
+                <h3 data-i18n="features.returns">Легкий возврат</h3>
+                <p data-i18n="features.returnsDesc">Возврат в течение 30 дней без лишних вопросов</p>
             </div>
         </div>
     </section>
@@ -904,39 +988,231 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>BookVerse</h3>
-                <p>Ваш надежный партнер в мире литературы с 2010 года</p>
+                <p data-i18n="footer.description">Ваш надежный партнер в мире литературы с 2010 года</p>
             </div>
             <div class="footer-section">
-                <h4>Категории</h4>
-                <a href="#">Фэнтези</a>
-                <a href="#">Научная фантастика</a>
-                <a href="#">Детективы</a>
-                <a href="#">Романы</a>
-                <a href="#">Классика</a>
+                <h4 data-i18n="footer.categories">Категории</h4>
+                <a href="#" data-i18n="categories.fantasy">Фэнтези</a>
+                <a href="#" data-i18n="categories.scifi">Научная фантастика</a>
+                <a href="#" data-i18n="categories.detective">Детективы</a>
+                <a href="#" data-i18n="categories.romance">Романы</a>
+                <a href="#" data-i18n="categories.classic">Классика</a>
             </div>
             <div class="footer-section">
-                <h4>Помощь</h4>
-                <a href="#">Доставка</a>
-                <a href="#">Оплата</a>
-                <a href="#">Возврат</a>
-                <a href="#">Контакты</a>
-                <a href="#">FAQ</a>
+                <h4 data-i18n="footer.help">Помощь</h4>
+                <a href="#" data-i18n="footer.shipping">Доставка</a>
+                <a href="#" data-i18n="footer.payment">Оплата</a>
+                <a href="#" data-i18n="footer.returns">Возврат</a>
+                <a href="#" data-i18n="footer.contacts">Контакты</a>
+                <a href="#" data-i18n="footer.faq">FAQ</a>
             </div>
             <div class="footer-section">
-                <h4>Подписка</h4>
-                <p>Получайте первыми информацию о новинках и скидках</p>
+                <h4 data-i18n="footer.subscribe">Подписка</h4>
+                <p data-i18n="footer.subscribeDesc">Получайте первыми информацию о новинках и скидках</p>
                 <div class="subscribe-form">
-                    <input type="email" placeholder="Ваш email">
-                    <button>Подписаться</button>
+                    <input type="email" placeholder="Ваш email" data-i18n-placeholder="footer.emailPlaceholder">
+                    <button data-i18n="footer.subscribeButton">Подписаться</button>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 BookVerse. Все права защищены.</p>
+            <p data-i18n="footer.copyright">&copy; 2024 BookVerse. Все права защищены.</p>
         </div>
     </footer>
 
     <script>
+        // Локализация
+        const translations = {
+            ru: {
+                // Навигация
+                "nav.home": "Главная",
+                "nav.categories": "Категории",
+                "nav.bestsellers": "Бестселлеры",
+                "nav.new": "Новинки",
+                "nav.sales": "Акции",
+                
+                // Герой секция
+                "hero.title": "Откройте мир бесконечных историй",
+                "hero.subtitle": "Более 10,000 книг на любой вкус. Находите свои следующие любимые произведения!",
+                "search.placeholder": "Поиск по названию, автору или жанру...",
+                "search.button": "Найти",
+                
+                // Категории
+                "categories.title": "Популярные категории",
+                "categories.fantasy": "Фэнтези",
+                "categories.fantasyCount": "1,245 книг",
+                "categories.scifi": "Фантастика",
+                "categories.scifiCount": "892 книги",
+                "categories.romance": "Роман",
+                "categories.romanceCount": "1,567 книг",
+                "categories.detective": "Детектив",
+                "categories.detectiveCount": "734 книги",
+                "categories.classic": "Классика",
+                "categories.classicCount": "2,134 книги",
+                
+                // Бестселлеры
+                "bestsellers.title": "Бестселлеры",
+                "bestsellers.viewAll": "Смотреть все →",
+                
+                // Книги
+                "book.details": "Подробнее",
+                "book.buy": "Купить",
+                
+                // Модальное окно
+                "modal.reviews": "(4.8 · 142 отзыва)",
+                "modal.description": "Великий роман о добре и зле, любви и предательстве, происходящий в Москве 1930-х годов. Сатана лично посещает столицу, чтобы провести весенний бал полнолуния.",
+                "modal.year": "Год:",
+                "modal.pages": "Страниц:",
+                "modal.genre": "Жанр:",
+                "modal.addToCart": "Добавить в корзину",
+                "modal.addToWishlist": "♥ В избранное",
+                
+                // Новинки
+                "newArrivals.title": "Новые поступления",
+                "newArrivals.viewAll": "Смотреть все →",
+                
+                // Преимущества
+                "features.title": "Почему выбирают нас",
+                "features.freeShipping": "Бесплатная доставка",
+                "features.freeShippingDesc": "Бесплатная доставка при заказе от 2000 ₽ по всей России",
+                "features.quality": "Гарантия качества",
+                "features.qualityDesc": "Все книги от проверенных издательств с гарантией качества",
+                "features.support": "Поддержка 24/7",
+                "features.supportDesc": "Круглосуточная поддержка клиентов по всем вопросам",
+                "features.returns": "Легкий возврат",
+                "features.returnsDesc": "Возврат в течение 30 дней без лишних вопросов",
+                
+                // Футер
+                "footer.description": "Ваш надежный партнер в мире литературы с 2010 года",
+                "footer.categories": "Категории",
+                "footer.help": "Помощь",
+                "footer.shipping": "Доставка",
+                "footer.payment": "Оплата",
+                "footer.returns": "Возврат",
+                "footer.contacts": "Контакты",
+                "footer.faq": "FAQ",
+                "footer.subscribe": "Подписка",
+                "footer.subscribeDesc": "Получайте первыми информацию о новинках и скидках",
+                "footer.emailPlaceholder": "Ваш email",
+                "footer.subscribeButton": "Подписаться",
+                "footer.copyright": "© 2024 BookVerse. Все права защищены."
+            },
+            en: {
+                // Навигация
+                "nav.home": "Home",
+                "nav.categories": "Categories",
+                "nav.bestsellers": "Bestsellers",
+                "nav.new": "New Arrivals",
+                "nav.sales": "Sales",
+                
+                // Герой секция
+                "hero.title": "Discover a World of Endless Stories",
+                "hero.subtitle": "Over 10,000 books for every taste. Find your next favorite reads!",
+                "search.placeholder": "Search by title, author, or genre...",
+                "search.button": "Search",
+                
+                // Категории
+                "categories.title": "Popular Categories",
+                "categories.fantasy": "Fantasy",
+                "categories.fantasyCount": "1,245 books",
+                "categories.scifi": "Science Fiction",
+                "categories.scifiCount": "892 books",
+                "categories.romance": "Romance",
+                "categories.romanceCount": "1,567 books",
+                "categories.detective": "Detective",
+                "categories.detectiveCount": "734 books",
+                "categories.classic": "Classics",
+                "categories.classicCount": "2,134 books",
+                
+                // Бестселлеры
+                "bestsellers.title": "Bestsellers",
+                "bestsellers.viewAll": "View All →",
+                
+                // Книги
+                "book.details": "Details",
+                "book.buy": "Buy",
+                
+                // Модальное окно
+                "modal.reviews": "(4.8 · 142 reviews)",
+                "modal.description": "A great novel about good and evil, love and betrayal, set in 1930s Moscow. Satan himself visits the capital to host the spring full moon ball.",
+                "modal.year": "Year:",
+                "modal.pages": "Pages:",
+                "modal.genre": "Genre:",
+                "modal.addToCart": "Add to Cart",
+                "modal.addToWishlist": "♥ Add to Wishlist",
+                
+                // Новинки
+                "newArrivals.title": "New Arrivals",
+                "newArrivals.viewAll": "View All →",
+                
+                // Преимущества
+                "features.title": "Why Choose Us",
+                "features.freeShipping": "Free Shipping",
+                "features.freeShippingDesc": "Free shipping on orders over 2000 ₽ across Russia",
+                "features.quality": "Quality Guarantee",
+                "features.qualityDesc": "All books from verified publishers with quality guarantee",
+                "features.support": "24/7 Support",
+                "features.supportDesc": "Round-the-clock customer support for all inquiries",
+                "features.returns": "Easy Returns",
+                "features.returnsDesc": "30-day return policy with no questions asked",
+                
+                // Футер
+                "footer.description": "Your reliable partner in the world of literature since 2010",
+                "footer.categories": "Categories",
+                "footer.help": "Help",
+                "footer.shipping": "Shipping",
+                "footer.payment": "Payment",
+                "footer.returns": "Returns",
+                "footer.contacts": "Contacts",
+                "footer.faq": "FAQ",
+                "footer.subscribe": "Subscribe",
+                "footer.subscribeDesc": "Be the first to know about new arrivals and discounts",
+                "footer.emailPlaceholder": "Your email",
+                "footer.subscribeButton": "Subscribe",
+                "footer.copyright": "© 2024 BookVerse. All rights reserved."
+            }
+        };
+
+        // Функция для переключения языка
+        function switchLanguage(lang) {
+            // Сохраняем выбор языка в localStorage
+            localStorage.setItem('preferred-language', lang);
+            
+            // Обновляем текст на странице
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            // Обновляем placeholder'ы
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-i18n-placeholder');
+                if (translations[lang] && translations[lang][key]) {
+                    element.setAttribute('placeholder', translations[lang][key]);
+                }
+            });
+            
+            // Обновляем активный язык в переключателе
+            document.querySelectorAll('.lang-option').forEach(option => {
+                if (option.getAttribute('data-lang') === lang) {
+                    option.classList.add('active');
+                    option.innerHTML = `<i class="fas fa-check"></i><span>${option.textContent}</span>`;
+                } else {
+                    option.classList.remove('active');
+                    option.innerHTML = `<span>${option.textContent}</span>`;
+                }
+            });
+            
+            // Обновляем текст текущего языка
+            const currentLangText = lang === 'ru' ? 'Русский' : 'English';
+            document.getElementById('current-lang').textContent = currentLangText;
+            
+            // Обновляем атрибут lang у html элемента
+            document.documentElement.lang = lang;
+        }
+
         // Функция для открытия модального окна
         function openBookModal() {
             const modal = document.getElementById('bookModal');
@@ -952,6 +1228,32 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Загружаем сохраненный язык или используем русский по умолчанию
+            const savedLang = localStorage.getItem('preferred-language') || 'ru';
+            switchLanguage(savedLang);
+            
+            // Обработчики для переключателя языка
+            const langButton = document.querySelector('.btn-lang');
+            const langOptions = document.querySelector('.lang-options');
+            
+            langButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                langOptions.classList.toggle('show');
+            });
+            
+            document.querySelectorAll('.lang-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    switchLanguage(lang);
+                    langOptions.classList.remove('show');
+                });
+            });
+            
+            // Закрытие выпадающего списка при клике вне его
+            document.addEventListener('click', function() {
+                langOptions.classList.remove('show');
+            });
+            
             // Находим кнопку "Подробнее" у первой книги (Мастер и Маргарита)
             const detailsBtn = document.querySelector('.book-card:first-child .btn-details');
             
@@ -991,7 +1293,11 @@
             
             if (modalBuyBtn) {
                 modalBuyBtn.addEventListener('click', function() {
-                    alert('«Мастер и Маргарита» добавлен в корзину!');
+                    const lang = localStorage.getItem('preferred-language') || 'ru';
+                    const message = lang === 'ru' ? 
+                        '«Мастер и Маргарита» добавлен в корзину!' : 
+                        '«The Master and Margarita» added to cart!';
+                    alert(message);
                     closeBookModal();
                 });
             }
@@ -999,12 +1305,14 @@
             if (wishlistBtn) {
                 wishlistBtn.addEventListener('click', function() {
                     this.classList.toggle('active');
+                    const lang = localStorage.getItem('preferred-language') || 'ru';
+                    
                     if (this.classList.contains('active')) {
-                        this.innerHTML = '♥ В избранном';
+                        this.innerHTML = lang === 'ru' ? '♥ В избранном' : '♥ In Wishlist';
                         this.style.background = '#4f46e5';
                         this.style.color = 'white';
                     } else {
-                        this.innerHTML = '♥ В избранное';
+                        this.innerHTML = lang === 'ru' ? '♥ В избранное' : '♥ Add to Wishlist';
                         this.style.background = '#e5e7eb';
                         this.style.color = '#1f2937';
                     }
@@ -1016,11 +1324,13 @@
             const cartCount = document.querySelector('.cart-count');
             let count = 0;
 
-             buyButtons.forEach(button => {
-             button.addEventListener('click', function() {
+            buyButtons.forEach(button => {
+                button.addEventListener('click', function() {
                     count++;
                     cartCount.textContent = count;
-            //         alert('Товар добавлен в корзину!');
+                    const lang = localStorage.getItem('preferred-language') || 'ru';
+                    const message = lang === 'ru' ? 'Товар добавлен в корзину!' : 'Item added to cart!';
+                    // alert(message);
                 });
             });
 
@@ -1028,7 +1338,9 @@
             const searchButton = document.querySelector('.search-bar button');
             searchButton.addEventListener('click', function() {
                 const searchInput = document.querySelector('.search-bar input');
-                alert('Поиск: ' + searchInput.value);
+                const lang = localStorage.getItem('preferred-language') || 'ru';
+                const message = lang === 'ru' ? 'Поиск: ' : 'Search: ';
+                alert(message + searchInput.value);
             });
         });
     </script>
