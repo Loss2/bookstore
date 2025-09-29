@@ -1,274 +1,166 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BookVerse | Книжный магазин</title>
+    <title>BookVerse | Online Bookstore</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/ak_container.js?id=MXw0" ></script>
-<script>
-/* TEMP PATCH — экранируем селекторы вида "#123" -> "#\31 23" */
-(function(){
-  const escNumericId = (sel) => {
-    if (typeof sel !== 'string') return sel;
-    const m = sel.match(/^#(\d+)$/);
-    if (!m) return sel;
-    const s = m[1];
-    // первая цифра экранируется как \3<digit> + пробел
-    return '#\\3' + s[0] + (s.length > 1 ? ' ' + s.slice(1) : ' ');
-  };
-  const wrap = (proto, name) => {
-    const orig = proto[name];
-    Object.defineProperty(proto, name, {
-      configurable: true, writable: true,
-      value: function(sel){
-        try { return orig.call(this, sel); }
-        catch (e) {
-          const fixed = escNumericId(sel);
-          if (fixed !== sel) return orig.call(this, fixed);
-          throw e;
-        }
-      }
-    });
-  };
-  wrap(Document.prototype, 'querySelector');
-  wrap(Document.prototype, 'querySelectorAll');
-  wrap(Element.prototype,  'querySelector');
-  wrap(Element.prototype,  'querySelectorAll');
-})();
-</script>
-<script>
-    (function (window, document, dataLayerName, containerID) {
-        window[dataLayerName] = window[dataLayerName] || [];
-        window[dataLayerName].push({ 'start': new Date().getTime(), event: 'actm-js' });
-        var firstScript = document.getElementsByTagName('script')[0];
-        var script = document.createElement('script');
-        var dl = dataLayerName !== 'acDataLayer' ? '&l=' + dataLayerName : '';
-        script.async = true;
-        script.src = 'https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/actm/js/actm.js?id=' + containerID + dl;
-        script.type = 'module';
-        if (firstScript && firstScript.parentNode) {
-            firstScript.parentNode.insertBefore(script, firstScript);
-        }
-    }(window, document, 'acDataLayer', 'ATM-484uAZEXfQdxQnFr6'));
-</script>
     <style>
-        /* Стили для кнопки переключения языка */
-        .language-switcher {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .btn-lang {
-            background: none;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            padding: 8px 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: #1f2937;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-        
-        .btn-lang:hover {
-            background: #f3f4f6;
-            border-color: #9ca3af;
-        }
-        
-        .lang-options {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: white;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            z-index: 1001;
-            min-width: 120px;
-            margin-top: 5px;
-        }
-        
-        .lang-option {
-            padding: 10px 15px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.2s;
-        }
-        
-        .lang-option:hover {
-            background: #f3f4f6;
-        }
-        
-        .lang-option.active {
-            background: #e0e7ff;
-            color: #4f46e5;
-            font-weight: 600;
-        }
-        
-        .lang-options.show {
-            display: block;
-        }
-
         .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    animation: fadeIn 0.3s ease;
-}
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            animation: fadeIn 0.3s ease;
+        }
 
-.modal-content {
-    background-color: white;
-    margin: 5% auto;
-    padding: 20px;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 800px;
-    max-height: 80vh;
-    overflow-y: auto;
-    position: relative;
-    animation: slideIn 0.3s ease;
-}
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
 
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    position: absolute;
-    right: 20px;
-    top: 15px;
-}
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 15px;
+        }
 
-.close:hover {
-    color: #000;
-}
+        .close:hover {
+            color: #000;
+        }
 
-.modal-body {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 30px;
-    margin-top: 20px;
-}
+        .modal-body {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
 
-.modal-body img {
-    width: 100%;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
+        .modal-body img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
 
-.modal-info h2 {
-    color: #1f2937;
-    margin-bottom: 10px;
-    font-size: 2em;
-}
+        .modal-info h2 {
+            color: #1f2937;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
 
-.modal-info h3 {
-    color: #6b7280;
-    margin-bottom: 20px;
-    font-weight: 500;
-}
+        .modal-info h3 {
+            color: #6b7280;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
 
-.rating {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-.stars {
-    color: #f59e0b;
-    font-size: 1.2em;
-}
+        .stars {
+            color: #f59e0b;
+            font-size: 1.2em;
+        }
 
-.reviews {
-    color: #6b7280;
-}
+        .reviews {
+            color: #6b7280;
+        }
 
-.description {
-    line-height: 1.6;
-    margin-bottom: 20px;
-    color: #4b5563;
-}
+        .description {
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #4b5563;
+        }
 
-.details {
-    background: #f8fafc;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
+        .details {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
 
-.details p {
-    margin: 5px 0;
-    color: #4b5563;
-}
+        .details p {
+            margin: 5px 0;
+            color: #4b5563;
+        }
 
-.price-section {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 25px;
-}
+        .price-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
 
-.old-price {
-    text-decoration: line-through;
-    color: #9ca3af;
-    font-size: 1.1em;
-}
+        .old-price {
+            text-decoration: line-through;
+            color: #9ca3af;
+            font-size: 1.1em;
+        }
 
-.modal-actions {
-    display: flex;
-    gap: 10px;
-}
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
 
-.btn-wishlist {
-    background: #e5e7eb;
-    color: #1f2937;
-    border: none;
-    padding: 15px 25px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background 0.3s;
-}
+        .btn-wishlist {
+            background: #e5e7eb;
+            color: #1f2937;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
 
-.btn-wishlist:hover {
-    background: #d1d5db;
-}
+        .btn-wishlist:hover {
+            background: #d1d5db;
+        }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
-@keyframes slideIn {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
 
-/* Адаптивность для модалки */
-@media (max-width: 768px) {
-    .modal-body {
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
-    
-    .modal-content {
-        margin: 10% auto;
-        width: 95%;
-    }
-}
+        /* Responsive modal */
+        @media (max-width: 768px) {
+            .modal-body {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -282,7 +174,7 @@
             background-color: #f9fafb;
         }
 
-        /* Навигация */
+        /* Navigation */
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -361,7 +253,7 @@
             justify-content: center;
         }
 
-        /* Герой секция */
+        /* Hero section */
         .hero {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -412,7 +304,7 @@
             background: #e69008;
         }
 
-        /* Категории */
+        /* Categories */
         .categories {
             padding: 3rem 5%;
             background: white;
@@ -461,7 +353,7 @@
             font-size: 0.9rem;
         }
 
-        /* Книги */
+        /* Books */
         .books-section {
             padding: 3rem 5%;
         }
@@ -570,7 +462,7 @@
             background: #4338ca;
         }
 
-        /* Преимущества */
+        /* Features */
         .features {
             padding: 4rem 5%;
             background: #f8fafc;
@@ -608,7 +500,7 @@
             color: #6b7280;
         }
 
-        /* Футер */
+        /* Footer */
         footer {
             background: #1f2937;
             color: white;
@@ -669,7 +561,7 @@
             color: #9ca3af;
         }
 
-        /* Адаптивность */
+        /* Responsive design */
         @media (max-width: 768px) {
             .navbar {
                 padding: 1rem;
@@ -694,46 +586,24 @@
             .categories-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-            
-            .language-switcher {
-                margin-left: auto;
-                margin-right: 10px;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- Навигация -->
+    <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-brand">
             <i class="fas fa-book-open"></i>
             <span>BookVerse</span>
         </div>
         <div class="nav-links">
-            <a href="#" class="active" data-i18n="nav.home">Главная</a>
-            <a href="#" data-i18n="nav.categories">Категории</a>
-            <a href="#" data-i18n="nav.bestsellers">Бестселлеры</a>
-            <a href="#" data-i18n="nav.new">Новинки</a>
-            <a href="#" data-i18n="nav.sales">Акции</a>
+            <a href="#" class="active">Home</a>
+            <a href="#">Categories</a>
+            <a href="#">Bestsellers</a>
+            <a href="#">New Arrivals</a>
+            <a href="#">Sales</a>
         </div>
         <div class="nav-actions">
-            <!-- Кнопка переключения языка -->
-            <div class="language-switcher">
-                <button class="btn-lang">
-                    <i class="fas fa-globe"></i>
-                    <span id="current-lang">Русский</span>
-                    <i class="fas fa-chevron-down"></i>
-                </button>
-                <div class="lang-options">
-                    <div class="lang-option active" data-lang="ru">
-                        <i class="fas fa-check"></i>
-                        <span>Русский</span>
-                    </div>
-                    <div class="lang-option" data-lang="en">
-                        <span>English</span>
-                    </div>
-                </div>
-            </div>
             <button class="btn-cart">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="cart-count">0</span>
@@ -744,266 +614,377 @@
         </div>
     </nav>
 
-    <!-- Герой секция -->
+    <!-- Hero section -->
     <header class="hero">
-        <h1 data-i18n="hero.title">Откройте мир бесконечных историй</h1>
-        <p data-i18n="hero.subtitle">Более 10,000 книг на любой вкус. Находите свои следующие любимые произведения!</p>
+        <h1>Discover a World of Endless Stories</h1>
+        <p>Over 10,000 books for every taste. Find your next favorite read!</p>
         <div class="search-bar">
-            <input type="text" placeholder="Поиск по названию, автору или жанру..." data-i18n-placeholder="search.placeholder">
-            <button><i class="fas fa-search"></i> <span data-i18n="search.button">Найти</span></button>
+            <input type="text" placeholder="Search by title, author, or genre...">
+            <button><i class="fas fa-search"></i> Search</button>
         </div>
     </header>
 
-    <!-- Категории -->
+    <!-- Categories -->
     <section class="categories">
-        <h2 data-i18n="categories.title">Популярные категории</h2>
+        <h2>Popular Categories</h2>
         <div class="categories-grid">
-            <div class="category-card" onclick="window.location.href='fantsy.html';">
+            <div class="category-card" onclick="window.location.href='fantasy.html';">
                 <i class="fas fa-dragon"></i>
-                <h3 data-i18n="categories.fantasy">Фэнтези</h3>
-                <p data-i18n="categories.fantasyCount">1,245 книг</p>
+                <h3>Fantasy</h3>
+                <p>1,245 books</p>
             </div>
             <div class="category-card">
                 <i class="fas fa-rocket"></i>
-                <h3 data-i18n="categories.scifi">Фантастика</h3>
-                <p data-i18n="categories.scifiCount">892 книги</p>
+                <h3>Science Fiction</h3>
+                <p>892 books</p>
             </div>
             <div class="category-card">
                 <i class="fas fa-heart"></i>
-                <h3 data-i18n="categories.romance">Роман</h3>
-                <p data-i18n="categories.romanceCount">1,567 книг</p>
+                <h3>Romance</h3>
+                <p>1,567 books</p>
             </div>
             <div class="category-card">
                 <i class="fas fa-search"></i>
-                <h3 data-i18n="categories.detective">Детектив</h3>
-                <p data-i18n="categories.detectiveCount">734 книги</p>
+                <h3>Mystery</h3>
+                <p>734 books</p>
             </div>
             <div class="category-card">
                 <i class="fas fa-graduation-cap"></i>
-                <h3 data-i18n="categories.classic">Классика</h3>
-                <p data-i18n="categories.classicCount">2,134 книги</p>
+                <h3>Classics</h3>
+                <p>2,134 books</p>
             </div>
         </div>
     </section>
 
-    <!-- Бестселлеры -->
+    <!-- Bestsellers -->
     <section class="books-section">
         <div class="section-header">
-            <h2 data-i18n="bestsellers.title">Бестселлеры</h2>
-            <a href="#" class="view-all" data-i18n="bestsellers.viewAll">Смотреть все →</a>
+            <h2>Bestsellers</h2>
+            <a href="#" class="view-all">View All →</a>
         </div>
         <div class="books-grid">
             <div class="book-card">
                 <div class="book-image">
-                    <img src="https://picsum.photos/300/400?random=1" alt="Обложка книги">
+                    <img src="https://picsum.photos/300/400?random=1" alt="Book cover">
                 </div>
                 <div class="book-info">
-                    <h3 data-i18n="books.masterMargarita">Мастер и Маргарита</h3>
-                    <p class="book-author" data-i18n="authors.bulgakov">Михаил Булгаков</p>
-                    <p class="price">599 ₽</p>
+                    <h3>The Master and Margarita</h3>
+                    <p class="book-author">Mikhail Bulgakov</p>
+                    <p class="price">$15.99</p>
                     <div class="book-actions">
-                        <button class="btn-details" data-i18n="book.details">Подробнее</button>
-                        <button class="btn-buy" data-i18n="book.buy">Купить</button>
+                        <button class="btn-details">Details</button>
+                        <button class="btn-buy">Buy</button>                       
                     </div>
                 </div>
             </div>
             
             <div class="book-card">
                 <div class="book-image">
-                    <img src="https://picsum.photos/300/400?random=2" alt="Обложка книги">
+                    <img src="https://picsum.photos/300/400?random=2" alt="Book cover">
                 </div> 
                 <div class="book-info">
-                    <h3 data-i18n="books.1984">1984</h3>
-                    <p class="book-author" data-i18n="authors.orwell">Джордж Оруэлл</p>
-                    <p class="price">650 ₽</p>
+                    <h3>1984</h3>
+                    <p class="book-author">George Orwell</p>
+                    <p class="price">$16.50</p>
                     <div class="book-actions">
-                        <button class="btn-details" data-i18n="book.details">Подробнее</button>
-                        <button class="btn-buy" data-i18n="book.buy">Купить</button>
+                        <button class="btn-details">Details</button>
+                        <button class="btn-buy">Buy</button>
                     </div>
                 </div>
             </div>
             <div class="book-card">
                 <div class="book-image">
-                    <img src="https://picsum.photos/300/400?random=3" alt="Обложка книги">
+                    <img src="https://picsum.photos/300/400?random=3" alt="Book cover">
                 </div>
                 <div class="book-info">
-                    <h3 data-i18n="books.harryPotter">Гарри Поттер и философский камень</h3>
-                    <p class="book-author" data-i18n="authors.rowling">Джоан Роулинг</p>
-                    <p class="price">899 ₽</p>
+                    <h3>Harry Potter and the Philosopher's Stone</h3>
+                    <p class="book-author">J.K. Rowling</p>
+                    <p class="price">$22.99</p>
                     <div class="book-actions">
-                        <button class="btn-details" data-i18n="book.details">Подробнее</button>
-                        <button class="btn-buy" data-i18n="book.buy">Купить</button>
+                        <button class="btn-details">Details</button>
+                        <button class="btn-buy">Buy</button>
                     </div>
                 </div>
             </div>
             <div class="book-card">
                 <div class="book-image">
-                    <img src="https://picsum.photos/300/400?random=4" alt="Обложка книги">
+                    <img src="https://picsum.photos/300/400?random=4" alt="Book cover">
                 </div>
                 <div class="book-info">
-                    <h3 data-i18n="books.crimePunishment">Преступление и наказание</h3>
-                    <p class="book-author" data-i18n="authors.dostoevsky">Фёдор Достоевский</p>
-                    <p class="price">550 ₽</p>
+                    <h3>Crime and Punishment</h3>
+                    <p class="book-author">Fyodor Dostoevsky</p>
+                    <p class="price">$14.50</p>
                     <div class="book-actions">
-                        <button class="btn-details" data-i18n="book.details">Подробнее</button>
-                        <button class="btn-buy" data-i18n="book.buy">Купить</button>
+                        <button class="btn-details">Details</button>
+                        <button class="btn-buy">Buy</button>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Модальное окно -->
+    <!-- Modal -->
     <div id="bookModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <div class="modal-body">
-                <img src="https://picsum.photos/300/400?random=1" alt="Обложка книги">
+                <img src="https://picsum.photos/300/400?random=1" alt="Book cover">
                 <div class="modal-info">
-                    <h2 data-i18n="books.masterMargarita">Мастер и Маргарита</h2>
-                    <h3 data-i18n="authors.bulgakov">Михаил Булгаков</h3>
+                    <h2>The Master and Margarita</h2>
+                    <h3>Mikhail Bulgakov</h3>
                     
                     <div class="rating">
                         <div class="stars">★★★★☆</div>
-                        <span class="reviews" data-i18n="modal.reviews">(4.8 · 142 отзыва)</span>
+                        <span class="reviews">(4.8 · 142 reviews)</span>
                     </div>
                     
-                    <p class="description" data-i18n="modal.description">Великий роман о добре и зле, любви и предательстве, происходящий в Москве 1930-х годов. Сатана лично посещает столицу, чтобы провести весенний бал полнолуния.</p>
+                    <p class="description">A masterful novel about good and evil, love and betrayal, set in 1930s Moscow. Satan himself visits the capital to host the Spring Ball of the Full Moon.</p>
                     
                     <div class="details">
-                        <p><strong data-i18n="modal.year">Год:</strong> 1967</p>
-                        <p><strong data-i18n="modal.pages">Страниц:</strong> 480</p>
-                        <p><strong data-i18n="modal.genre">Жанр:</strong> <span data-i18n="genres.classic">Классика</span>, <span data-i18n="genres.mystery">Мистика</span></p>
+                        <p><strong>Year:</strong> 1967</p>
+                        <p><strong>Pages:</strong> 480</p>
+                        <p><strong>Genre:</strong> Classics, Mystical</p>
                     </div>
                     
                     <div class="price-section">
-                        <p class="price">599 ₽</p>
-                        <p class="old-price">799 ₽</p>
+                        <p class="price">$15.99</p>
+                        <p class="old-price">$19.99</p>
                     </div>
                     
                     <div class="modal-actions">
-                        <button class="btn-buy" data-i18n="modal.addToCart">Добавить в корзину</button>
-                        <button class="btn-wishlist" data-i18n="modal.addToWishlist">♥ В избранное</button>
+                        <button class="btn-buy">Add to Cart</button>
+                        <button class="btn-wishlist">♥ Add to Wishlist</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Новинки -->
+    <!-- New Arrivals -->
     <section class="books-section">
         <div class="section-header">
-            <h2 data-i18n="newArrivals.title">Новые поступления</h2>
-            <a href="#" class="view-all" data-i18n="newArrivals.viewAll">Смотреть все →</a>
+            <h2>New Arrivals</h2>
+            <a href="#" class="view-all">View All →</a>
         </div>
         <div class="books-grid">
             <div class="book-card">
                 <div class="book-image">
-                    <img src="https://picsum.photos/300/400?random=5" alt="Обложка книги">
+                    <img src="https://picsum.photos/300/400?random=5" alt="Book cover">
                 </div>
                 <div class="book-info">
-                    <h3 data-i18n="books.dune">Дюна</h3>
-                    <p class="book-author" data-i18n="authors.herbert">Фрэнк Герберт</p>
-                    <p class="price">680 ₽</p>
+                    <h3>Dune</h3>
+                    <p class="book-author">Frank Herbert</p>
+                    <p class="price">$17.00</p>
                     <div class="book-actions">
-                        <button class="btn-details" data-i18n="book.details">Подробнее</button>
-                        <button class="btn-buy" data-i18n="book.buy">Купить</button>
+                        <button class="btn-details">Details</button>
+                        <button class="btn-buy">Buy</button>
                     </div>
                 </div>
             </div>
             <div class="book-card">
                 <div class="book-image">
-                    <img src="https://picsum.photos/300/400?random=6" alt="Обложка книги">
+                    <img src="https://picsum.photos/300/400?random=6" alt="Book cover">
                 </div>
                 <div class="book-info">
-                    <h3 data-i18n="books.threeComrades">Три товарища</h3>
-                    <p class="book-author" data-i18n="authors.remarque">Эрих Мария Ремарк</p>
-                    <p class="price">610 ₽</p>
+                    <h3>Three Comrades</h3>
+                    <p class="book-author">Erich Maria Remarque</p>
+                    <p class="price">$15.25</p>
                     <div class="book-actions">
-                        <button class="btn-details" data-i18n="book.details">Подробнее</button>
-                        <button class="btn-buy" data-i18n="book.buy">Купить</button>
+                        <button class="btn-details">Details</button>
+                        <button class="btn-buy">Buy</button>
                     </div>
                 </div>
             </div>
             <div class="book-card">
                 <div class="book-image">
-                    <img src="https://picsum.photos/300/400?random=7" alt="Обложка книги">
+                    <img src="https://picsum.photos/300/400?random=7" alt="Book cover">
                 </div>
                 <div class="book-info">
-                    <h3 data-i18n="books.gameThrones">Игра престолов</h3>
-                    <p class="book-author" data-i18n="authors.martin">Джордж Р.Р. Мартин</p>
-                    <p class="price">890 ₽</p>
+                    <h3>A Game of Thrones</h3>
+                    <p class="book-author">George R.R. Martin</p>
+                    <p class="price">$22.25</p>
                     <div class="book-actions">
-                        <button class="btn-details" data-i18n="book.details">Подробнее</button>
-                        <button class="btn-buy" data-i18n="book.buy">Купить</button>
+                        <button class="btn-details">Details</button>
+                        <button class="btn-buy">Buy</button>
                     </div>
                 </div>
             </div>
             <div class="book-card">
                 <div class="book-image">
-                    <img src="https://picsum.photos/300/400?random=8" alt="Обложка книги">
+                    <img src="https://picsum.photos/300/400?random=8" alt="Book cover">
                 </div>
                 <div class="book-info">
-                    <h3 data-i18n="books.annaKarenina">Анна Каренина</h3>
-                    <p class="book-author" data-i18n="authors.tolstoy">Лев Толстой</p>
-                    <p class="price">580 ₽</p>
+                    <h3>Anna Karenina</h3>
+                    <p class="book-author">Leo Tolstoy</p>
+                    <p class="price">$14.50</p>
                     <div class="book-actions">
-                        <button class="btn-details" data-i18n="book.details">Подробнее</button>
-                        <button class="btn-buy" data-i18n="book.buy">Купить</button>
+                        <button class="btn-details">Details</button>
+                        <button class="btn-buy">Buy</button>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Преимущества -->
+    <!-- Features -->
     <section class="features">
-        <h2 data-i18n="features.title">Почему выбирают нас</h2>
+        <h2>Why Choose Us</h2>
         <div class="features-grid">
             <div class="feature">
                 <i class="fas fa-truck"></i>
-                <h3 data-i18n="features.freeShipping">Бесплатная доставка</h3>
-                <p data-i18n="features.freeShippingDesc">Бесплатная доставка при заказе от 2000 ₽ по всей России</p>
+                <h3>Free Shipping</h3>
+                <p>Free shipping on orders over $25 across the US</p>
             </div>
             <div class="feature">
                 <i class="fas fa-shield-alt"></i>
-                <h3 data-i18n="features.quality">Гарантия качества</h3>
-                <p data-i18n="features.qualityDesc">Все книги от проверенных издательств с гарантией качества</p>
+                <h3>Quality Guarantee</h3>
+                <p>All books from verified publishers with quality guarantee</p>
             </div>
             <div class="feature">
                 <i class="fas fa-headset"></i>
-                <h3 data-i18n="features.support">Поддержка 24/7</h3>
-                <p data-i18n="features.supportDesc">Круглосуточная поддержка клиентов по всем вопросам</p>
+                <h3>24/7 Support</h3>
+                <p>Round-the-clock customer support for all inquiries</p>
             </div>
             <div class="feature">
                 <i class="fas fa-undo"></i>
-                <h3 data-i18n="features.returns">Легкий возврат</h3>
-                <p data-i18n="features.returnsDesc">Возврат в течение 30 дней без лишних вопросов</p>
+                <h3>Easy Returns</h3>
+                <p>30-day return policy with no questions asked</p>
             </div>
         </div>
     </section>
 
-    <!-- Футер -->
+    <!-- Footer -->
     <footer>
         <div class="footer-content">
             <div class="footer-section">
                 <h3>BookVerse</h3>
-                <p data-i18n="footer.description">Ваш надежный партнер в мире литературы с 2010 года</p>
+                <p>Your reliable partner in the world of literature since 2010</p>
             </div>
             <div class="footer-section">
-                <h4 data-i18n="footer.categories">Категории</h4>
-                <a href="#" data-i18n="categories.fantasy">Фэнтези</a>
-                <a href="#" data-i18n="categories.scifi">Научная фантастика</a>
-                <a href="#" data-i18n="categories.detective">Детективы</a>
-                <a href="#" data-i18n="categories.romance">Романы</a>
-                <a href="#" data-i18n="categories.classic">Классика</a>
+                <h4>Categories</h4>
+                <a href="#">Fantasy</a>
+                <a href="#">Science Fiction</a>
+                <a href="#">Mystery</a>
+                <a href="#">Romance</a>
+                <a href="#">Classics</a>
             </div>
             <div class="footer-section">
-                <h4 data-i18n="footer.help">Помощь</h4>
-                <a href="#" data-i18n="footer.shipping">Доставка</a>
-                <a href="#" data-i18n="footer.payment">Оплата</a>
-                <a href="#" data-i18n="footer.returns">Возврат</a>
-                <a href="#" data-i18n="footer.contacts">Контакты</a>
-                <a href="#" data-i18n="footer.faq">FAQ</a>
+                <h4>Help</h4>
+                <a href="#">Shipping</a>
+                <a href="#">Payment</a>
+                <a href="#">Returns</a>
+                <a href="#">Contact</a>
+                <a href="#">FAQ</a>
             </div>
-            <div class>
+            <div class="footer-section">
+                <h4>Newsletter</h4>
+                <p>Be the first to know about new arrivals and special offers</p>
+                <div class="subscribe-form">
+                    <input type="email" placeholder="Your email">
+                    <button>Subscribe</button>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 BookVerse. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Function to open modal
+        function openBookModal() {
+            const modal = document.getElementById('bookModal');
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        // Function to close modal
+        function closeBookModal() {
+            const modal = document.getElementById('bookModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restore scrolling
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Find "Details" button for the first book (The Master and Margarita)
+            const detailsBtn = document.querySelector('.book-card:first-child .btn-details');
+            
+            if (detailsBtn) {
+                detailsBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openBookModal();
+                });
+            }
+            
+            // Close modal with X button
+            const closeBtn = document.querySelector('.close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeBookModal);
+            }
+            
+            // Close modal when clicking outside
+            const modal = document.getElementById('bookModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeBookModal();
+                    }
+                });
+            }
+            
+            // Close with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeBookModal();
+                }
+            });
+            
+            // Handlers for buttons inside modal
+            const modalBuyBtn = document.querySelector('.modal-actions .btn-buy');
+            const wishlistBtn = document.querySelector('.modal-actions .btn-wishlist');
+            
+            if (modalBuyBtn) {
+                modalBuyBtn.addEventListener('click', function() {
+                    alert('"The Master and Margarita" added to cart!');
+                    closeBookModal();
+                });
+            }
+            
+            if (wishlistBtn) {
+                wishlistBtn.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    if (this.classList.contains('active')) {
+                        this.innerHTML = '♥ In Wishlist';
+                        this.style.background = '#4f46e5';
+                        this.style.color = 'white';
+                    } else {
+                        this.innerHTML = '♥ Add to Wishlist';
+                        this.style.background = '#e5e7eb';
+                        this.style.color = '#1f2937';
+                    }
+                });
+            }
+            
+            // Add items to cart
+            const buyButtons = document.querySelectorAll('.btn-buy');
+            const cartCount = document.querySelector('.cart-count');
+            let count = 0;
+
+            buyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    count++;
+                    cartCount.textContent = count;
+                    // alert('Item added to cart!');
+                });
+            });
+
+            // Search
+            const searchButton = document.querySelector('.search-bar button');
+            searchButton.addEventListener('click', function() {
+                const searchInput = document.querySelector('.search-bar input');
+                alert('Search: ' + searchInput.value);
+            });
+        });
+    </script>
+</body>
+</html>
