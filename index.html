@@ -5,22 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BookVerse | Online Bookstore</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script>
-    (function (window, document, dataLayerName, containerID) {
-        window[dataLayerName] = window[dataLayerName] || [];
-        window[dataLayerName].push({ 'start': new Date().getTime(), event: 'actm-js' });
-        var firstScript = document.getElementsByTagName('script')[0];
-        var script = document.createElement('script');
-        var dl = dataLayerName !== 'acDataLayer' ? '&l=' + dataLayerName : '';
-        script.async = true;
-        script.src = 'https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/actm/js/actm.js?id=' + containerID + dl;
-        script.type = 'module';
-        if (firstScript && firstScript.parentNode) {
-            firstScript.parentNode.insertBefore(script, firstScript);
-        }
-    }(window, document, 'acDataLayer', 'ATM-7a5dNDQvdR2UfiHbD'));
-</script>
-      <style>
+    
+    <!-- START OF ALTCRAFT PIXEL CODE !-->
+    <script type="text/javascript">
+    !function(){var e={url:"https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/pixel?k=34FyFph%2BVuzFYrhPh7C10PZrMeO6IYSFm%2Fqui6fGQJa6XD9SM9jghQ%3D%3D&s=MKQHRxXwHYI%3D",goals:"",value:parseFloat("0"),timeout:parseInt("0"),after_scroll:JSON.parse("false"),auto_load:JSON.parse("true")},o=function(o,t,n,a){var d=[].concat(o).map(function(e){return encodeURIComponent(e)}).join(","),c=encodeURIComponent(String(t||0)),i=encodeURIComponent(n.matching_mode||""),r=encodeURIComponent(n.db_id||0),u=encodeURIComponent(JSON.stringify(n.match||{})),l=encodeURIComponent(JSON.stringify(n.update||{}));setTimeout(function(){(new Image).src=[e.url,"goals="+d,"value="+c,"db_id="+r,"mmode="+i,"match="+u,"update="+l].join("&")},a)},t=!1,n=function(){t||(t=!0,e.after_scroll?document.addEventListener("scroll",function(){(window.pageYOffset||document.documentElement.scrollTop>0)&&o(e.goals,e.value,{},e.timeout)},{once: true}):e.auto_load&&o(e.goals,e.value,{},e.timeout))};"complete"===document.readyState||"interactive"===document.readyState?n():window.addEventListener("load",n);window.ak_pixel_push=function(e,t,n,a,d,c){var i=[];Array.isArray(e)?i=e:i[0]=e,o(i,t,{match:n,update:a,matching_mode:d,db_id:c},0)}}();
+    </script>
+    <!-- END OF ALTCRAFT PIXEL CODE !-->
+    
+    <style>
         .modal {
             display: none;
             position: fixed;
@@ -603,7 +595,7 @@
             }
         }
     </style>
-  </head>
+</head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
@@ -906,60 +898,122 @@
     </footer>
 
     <script>
-        // Function to open modal
-        function openBookModal() {
-            const modal = document.getElementById('bookModal');
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
-        }
-
-        // Function to close modal
-        function closeBookModal() {
-            const modal = document.getElementById('bookModal');
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto'; // Restore scrolling
+        // Функция для отправки событий в пиксель
+        function trackEvent(tag, value = 0) {
+            if (typeof ak_pixel_push !== 'undefined') {
+                ak_pixel_push(tag, value);
+                console.log('Tracked:', tag, 'Value:', value);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Find "Details" button for the first book (The Master and Margarita)
-            const detailsBtn = document.querySelector('.book-card:first-child .btn-details');
+            // 1. ОТСЛЕЖИВАНИЕ ПРОСМОТРОВ СТРАНИЦ ===========================
+            trackEvent('page_loaded');
             
-            if (detailsBtn) {
-                detailsBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    openBookModal();
+            // 2. КАТЕГОРИИ ================================================
+            const categoryCards = document.querySelectorAll('.category-card');
+            categoryCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const categoryName = this.querySelector('h3').textContent;
+                    trackEvent(`category_click_${categoryName.toLowerCase().replace(' ', '_')}`);
                 });
-            }
-            
-            // Close modal with X button
-            const closeBtn = document.querySelector('.close');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', closeBookModal);
-            }
-            
-            // Close modal when clicking outside
-            const modal = document.getElementById('bookModal');
-            if (modal) {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === modal) {
-                        closeBookModal();
-                    }
+                
+                card.addEventListener('mouseenter', function() {
+                    const categoryName = this.querySelector('h3').textContent;
+                    trackEvent(`category_hover_${categoryName.toLowerCase().replace(' ', '_')}`);
                 });
-            }
+            });
+
+            // 3. ПОИСК ====================================================
+            const searchButton = document.querySelector('.search-bar button');
+            const searchInput = document.querySelector('.search-bar input');
             
-            // Close with Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeBookModal();
-                }
+            searchInput.addEventListener('focus', function() {
+                trackEvent('search_field_focused');
             });
             
-            // Handlers for buttons inside modal
+            searchButton.addEventListener('click', function() {
+                const searchTerm = searchInput.value.trim();
+                if (searchTerm) {
+                    trackEvent('search_performed');
+                    trackEvent(`search_query_${searchTerm.toLowerCase().replace(/ /g, '_')}`);
+                }
+            });
+
+            // 4. КНИГИ - ДЕТАЛИ И ПОКУПКИ ================================
+            const detailsButtons = document.querySelectorAll('.btn-details');
+            detailsButtons.forEach((button, index) => {
+                button.addEventListener('click', function() {
+                    const bookCard = this.closest('.book-card');
+                    const bookTitle = bookCard.querySelector('h3').textContent;
+                    const priceText = bookCard.querySelector('.price').textContent;
+                    const price = parseFloat(priceText.replace('$', ''));
+                    
+                    trackEvent('book_details_opened', price);
+                    trackEvent(`book_details_${bookTitle.toLowerCase().replace(/ /g, '_')}`, price);
+                    
+                    // Для первой книги открываем модальное окно
+                    if (index === 0) {
+                        openBookModal();
+                    }
+                });
+            });
+
+            // 5. ДОБАВЛЕНИЕ В КОРЗИНУ ===================================
+            const buyButtons = document.querySelectorAll('.btn-buy');
+            const cartCount = document.querySelector('.cart-count');
+            let count = 0;
+
+            buyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const bookCard = this.closest('.book-card');
+                    const bookTitle = bookCard.querySelector('h3').textContent;
+                    const priceText = bookCard.querySelector('.price').textContent;
+                    const price = parseFloat(priceText.replace('$', ''));
+                    
+                    count++;
+                    cartCount.textContent = count;
+                    
+                    trackEvent('add_to_cart', price);
+                    trackEvent(`add_to_cart_${bookTitle.toLowerCase().replace(/ /g, '_')}`, price);
+                    trackEvent('cart_total_items', count);
+                });
+            });
+
+            // 6. МОДАЛЬНОЕ ОКНО ==========================================
+            let modalViewTime;
+            
+            function openBookModal() {
+                const modal = document.getElementById('bookModal');
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                
+                // Отслеживаем открытие модального окна
+                trackEvent('modal_opened', 15.99);
+                
+                // Отслеживаем длительный просмотр (5 секунд)
+                modalViewTime = setTimeout(() => {
+                    trackEvent('modal_extended_view', 15.99);
+                }, 5000);
+            }
+
+            function closeBookModal() {
+                const modal = document.getElementById('bookModal');
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                
+                if (modalViewTime) {
+                    clearTimeout(modalViewTime);
+                }
+            }
+
+            // Кнопки модального окна
             const modalBuyBtn = document.querySelector('.modal-actions .btn-buy');
             const wishlistBtn = document.querySelector('.modal-actions .btn-wishlist');
             
             if (modalBuyBtn) {
                 modalBuyBtn.addEventListener('click', function() {
+                    trackEvent('modal_add_to_cart', 15.99);
                     alert('"The Master and Margarita" added to cart!');
                     closeBookModal();
                 });
@@ -967,38 +1021,103 @@
             
             if (wishlistBtn) {
                 wishlistBtn.addEventListener('click', function() {
-                    this.classList.toggle('active');
-                    if (this.classList.contains('active')) {
+                    const isAdding = !this.classList.contains('active');
+                    
+                    if (isAdding) {
+                        trackEvent('add_to_wishlist', 15.99);
                         this.innerHTML = '♥ In Wishlist';
                         this.style.background = '#4f46e5';
                         this.style.color = 'white';
                     } else {
+                        trackEvent('remove_from_wishlist');
                         this.innerHTML = '♥ Add to Wishlist';
                         this.style.background = '#e5e7eb';
                         this.style.color = '#1f2937';
                     }
+                    this.classList.toggle('active');
                 });
             }
-            
-            // Add items to cart
-            const buyButtons = document.querySelectorAll('.btn-buy');
-            const cartCount = document.querySelector('.cart-count');
-            let count = 0;
 
-            buyButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    count++;
-                    cartCount.textContent = count;
-                    // alert('Item added to cart!');
+            // Закрытие модального окна
+            const closeBtn = document.querySelector('.close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeBookModal);
+            }
+            
+            const modal = document.getElementById('bookModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        trackEvent('modal_closed');
+                        closeBookModal();
+                    }
+                });
+            }
+
+            // 7. СКРОЛЛ ==================================================
+            window.addEventListener('scroll', function() {
+                const scrollPosition = window.scrollY;
+                const documentHeight = document.documentElement.scrollHeight;
+                const windowHeight = window.innerHeight;
+                
+                // 50% прокрутки
+                if (scrollPosition > (documentHeight - windowHeight) * 0.5) {
+                    if (!window.scroll50Tracked) {
+                        trackEvent('scroll_50_percent');
+                        window.scroll50Tracked = true;
+                    }
+                }
+                
+                // 90% прокрутки
+                if (scrollPosition > (documentHeight - windowHeight) * 0.9) {
+                    if (!window.scroll90Tracked) {
+                        trackEvent('scroll_90_percent');
+                        window.scroll90Tracked = true;
+                    }
+                }
+            });
+
+            // 8. ВРЕМЯ НА САЙТЕ =========================================
+            setTimeout(() => {
+                trackEvent('time_on_site_30s');
+            }, 30000);
+
+            setTimeout(() => {
+                trackEvent('time_on_site_2min');
+            }, 120000);
+
+            // 9. ФУТЕР И ПОДПИСКА =======================================
+            const subscribeBtn = document.querySelector('.subscribe-form button');
+            if (subscribeBtn) {
+                subscribeBtn.addEventListener('click', function() {
+                    const emailInput = this.previousElementSibling;
+                    if (emailInput.value) {
+                        trackEvent('newsletter_subscribed');
+                    }
+                });
+            }
+
+            // 10. КЛИКИ ПО ССЫЛКАМ ======================================
+            const viewAllLinks = document.querySelectorAll('.view-all');
+            viewAllLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.closest('section');
+                    const sectionTitle = section.querySelector('h2').textContent;
+                    trackEvent(`view_all_${sectionTitle.toLowerCase().replace(' ', '_')}`);
                 });
             });
+        });
 
-            // Search
-            const searchButton = document.querySelector('.search-bar button');
-            searchButton.addEventListener('click', function() {
-                const searchInput = document.querySelector('.search-bar input');
-                alert('Search: ' + searchInput.value);
-            });
+        // Закрытие по Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('bookModal');
+                if (modal && modal.style.display === 'block') {
+                    trackEvent('modal_closed_escape');
+                    closeBookModal();
+                }
+            }
         });
     </script>
 </body>
