@@ -110,7 +110,7 @@
             color: #6b7280;
         }
 
-        .description {
+        .deion {
             line-height: 1.6;
             margin-bottom: 20px;
             color: #4b5563;
@@ -761,7 +761,7 @@
                         <span class="reviews">(4.8 · 142 reviews)</span>
                     </div>
                     
-                    <p class="description">A masterful novel about good and evil, love and betrayal, set in 1930s Moscow. Satan himself visits the capital to host the Spring Ball of the Full Moon.</p>
+                    <p class="deion">A masterful novel about good and evil, love and betrayal, set in 1930s Moscow. Satan himself visits the capital to host the Spring Ball of the Full Moon.</p>
                     
                     <div class="details">
                         <p><strong>Year:</strong> 1967</p>
@@ -1135,6 +1135,16 @@
                 }
             }
         });
+        
+        document.querySelectorAll('.btn-details').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const bookCard = this.closest('.book-card');
+                const bookTitle = bookCard.querySelector('h3').textContent;
+                window.currentBookTitle = bookTitle; // Здесь передаётся!
+                console.log('Переменная установлена:', window.currentBookTitle);
+            });
+        });
+
     </script>
 </body>
 </html>
