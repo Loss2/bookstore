@@ -43,10 +43,20 @@
     return p2(d.getHours()) + ':' + p2(d.getMinutes()) + ':' + p2(d.getSeconds());
   }
 
+  function persist() {
+    try {
+      sessionStorage.setItem('tm-log-v1', JSON.stringify({
+        page: location.pathname + location.search,
+        items: items.slice(-120)
+      }));
+    } catch (e) {}
+  }
+
   function add(kind, text) {
     items.push({ kind: kind, text: text, t: stamp() });
     if (items.length > MAX) items.shift();
     if (ui) paint();
+    persist();
   }
 
   function row(it) {
@@ -276,6 +286,18 @@
     add('info', 'acpopup: ' + (typeof window.acpopup === 'function' ? 'есть' : 'нет'));
     add('info', 'ak_pixel_push: ' + (typeof window.ak_pixel_push === 'function' ? 'есть' : 'нет'));
   }
+
+  /* --- восстановление журнала предыдущей страницы --- */
+  try {
+    var prev = JSON.parse(sessionStorage.getItem('tm-log-v1') || 'null');
+    if (prev && prev.items && prev.items.length) {
+      var now = location.pathname + location.search;
+      if (prev.page !== now) {
+        items = prev.items.slice(-80);
+        items.push({ kind: 'nav', text: '— переход с ' + prev.page + ' —', t: stamp() });
+      }
+    }
+  } catch (e) {}
 
   ui = build();
   paint();
