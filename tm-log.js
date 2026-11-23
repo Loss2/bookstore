@@ -227,6 +227,21 @@
     };
   });
 
+  /* --- видно, какие события получает контейнер (acDataLayer) --- */
+  (function () {
+    var dl = window.acDataLayer;
+    if (!dl || typeof dl.push !== 'function') return;
+    var orig = dl.push;
+    dl.push = function () {
+      try {
+        var o = arguments[0];
+        var name = o && (o.event || o.eventName || o.name);
+        add('nav', 'acDataLayer ← ' + (name || JSON.stringify(o).slice(0, 80)));
+      } catch (e) {}
+      return orig.apply(dl, arguments);
+    };
+  })();
+
   /* --- перехват ak_pixel_push: видно, какие цели реально отправляет контейнер --- */
   (function () {
     var orig = window.ak_pixel_push;
