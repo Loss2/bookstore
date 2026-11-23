@@ -74,7 +74,7 @@
     <div class="item">
         <h2>3. Отправил заявку</h2>
         <p>Триггер <b>Отправка формы</b>, фильтр <code>Form ID</code> равно <code>lead-form</code>.</p>
-        <form id="lead-form" onsubmit="event.preventDefault(); alert('Заявка отправлена');">
+        <form id="lead-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent = 'Заявка отправлена';">
             <input type="text" name="name" placeholder="Имя" value="Тестовый посетитель">
             <input type="email" name="email" placeholder="Email" value="test@example.com">
             <button class="primary" type="submit">Отправить заявку</button>
@@ -186,6 +186,19 @@
     document.getElementById('js-error').addEventListener('click', function () {
         setTimeout(function () { throw new Error('Тестовая ошибка для триггера «Ошибка JavaScript»'); }, 0);
     });
+</script>
+
+<script>
+    /* Автопроход кейсов: test.html?auto=1 — только для проверки, на обычной странице не работает */
+    if (/[?&]auto=1/.test(location.search)) {
+        var step = function (ms, fn) { setTimeout(fn, ms); };
+        step(1500, function () { document.querySelector('.btn-buy').click(); });
+        step(3000, function () { document.getElementById('lead-form').requestSubmit(); });
+        step(4500, function () { document.getElementById('nav-btn').click(); });
+        step(6000, function () { document.getElementById('js-error').click(); });
+        step(7500, function () { document.querySelector('.promo').scrollIntoView({ block: 'center' }); });
+        step(9000, function () { window.scrollTo(0, document.body.scrollHeight); });
+    }
 </script>
 
 <!-- Журнал событий стенда -->

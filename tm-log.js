@@ -30,7 +30,7 @@
     try {
       var u = new URL(url, location.href);
       if (u.hostname === location.hostname) return u.pathname + (u.search || '');
-      var q = u.search.length > 80 ? u.search.slice(0, 80) + '…' : u.search;
+      var q = u.search.length > 220 ? u.search.slice(0, 220) + '…' : u.search;
       return u.host + u.pathname + q;
     } catch (e) {
       return String(url).slice(0, 140);
@@ -166,6 +166,18 @@
     };
   }
 
+  /* --- ресурсы: пиксель отправляет цель через new Image(), в DOM такой узел не появляется --- */
+  try {
+    new PerformanceObserver(function (list) {
+      list.getEntries().forEach(function (e) {
+        if (!/\/pixel\?|goals=|actm\/js\/actm\.js|ak_container\.js|event\/post/.test(e.name)) return;
+        var m = /[?&]goals=([^&]*)/.exec(e.name);
+        var g = m ? decodeURIComponent(m[1]).replace(/,/g, ', ') : '';
+        add(classify(e.name), shortUrl(e.name) + (g ? '  [' + g + ']' : ''));
+      });
+    }).observe({ type: 'resource', buffered: true });
+  } catch (err) {}
+
   /* --- подгружаемые скрипты, пиксели, фреймы --- */
   new MutationObserver(function (mutations) {
     mutations.forEach(function (m) {
@@ -214,6 +226,27 @@
       return res;
     };
   });
+
+  /* --- перехват ak_pixel_push: видно, какие цели реально отправляет контейнер --- */
+  (function () {
+    var orig = window.ak_pixel_push;
+    if (typeof orig !== 'function') return;
+    window.ak_pixel_push = function (goal, value) {
+      add('pixel', 'цель из контейнера: ak_pixel_push("' + goal + '"' +
+        (value === undefined ? '' : ', ' + value) + ')');
+      try {
+        var res = orig.apply(window, arguments);
+        if (res && typeof res.then === 'function') {
+          res.then(null, function (e) {
+            add('error', 'цель ' + goal + ': ' + (e && e.message ? e.message : String(e)));
+          });
+        }
+        return res;
+      } catch (e) {
+        add('error', 'цель ' + goal + ': ' + (e.message || String(e)));
+      }
+    };
+  })();
 
   /* --- старт --- */
   function report() {
