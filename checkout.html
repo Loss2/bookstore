@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформление заказа | BookVerse</title>
+
+    <!-- Менеджер тегов Altcraft: контейнер ATM-4ceAGbhFfaZvGHrV7 -->
+    <script>
+    (function (window, document, dataLayerName, containerID) {
+        window[dataLayerName] = window[dataLayerName] || [];
+        window[dataLayerName].push({ 'start': new Date().getTime(), event: 'actm-js' });
+        var firstScript = document.getElementsByTagName('script')[0];
+        var script = document.createElement('script');
+        var dl = dataLayerName !== 'acDataLayer' ? '&l=' + dataLayerName : '';
+        script.async = true;
+        script.src = 'https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/actm/js/actm.js?id=' + containerID + dl;
+        script.type = 'module';
+        if (firstScript && firstScript.parentNode) {
+            firstScript.parentNode.insertBefore(script, firstScript);
+        }
+    }(window, document, 'acDataLayer', 'ATM-4ceAGbhFfaZvGHrV7'));
+    </script>
+    <script src="https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/ak_container.js?id=OHw3"></script>
+
+    <!-- START OF ALTCRAFT PIXEL CODE !-->
+    <script type="text/javascript">
+    !function(){var e={url:"https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/pixel?k=34FyFph%2BVuzFYrhPh7C10PZrMeO6IYSFm%2Fqui6fGQJa6XD9SM9jghQ%3D%3D&s=MKQHRxXwHYI%3D",goals:"",value:parseFloat("0"),timeout:parseInt("0"),after_scroll:JSON.parse("false"),auto_load:JSON.parse("true")},o=function(o,t,n,a){var d=[].concat(o).map(function(e){return encodeURIComponent(e)}).join(","),c=encodeURIComponent(String(t||0)),i=encodeURIComponent(n.matching_mode||""),r=encodeURIComponent(n.db_id||0),u=encodeURIComponent(JSON.stringify(n.match||{})),l=encodeURIComponent(JSON.stringify(n.update||{}));setTimeout(function(){(new Image).src=[e.url,"goals="+d,"value="+c,"db_id="+r,"mmode="+i,"match="+u,"update="+l].join("&")},a)},t=!1,n=function(){t||(t=!0,e.after_scroll?document.addEventListener("scroll",function(){(window.pageYOffset||document.documentElement.scrollTop>0)&&o(e.goals,e.value,{},e.timeout)},{once: true}):e.auto_load&&o(e.goals,e.value,{},e.timeout))};"complete"===document.readyState||"interactive"===document.readyState?n():window.addEventListener("load",n);window.ak_pixel_push=function(e,t,n,a,d,c){var i=[];Array.isArray(e)?i=e:i[0]=e,o(i,t,{match:n,update:a,matching_mode:d,db_id:c},0)}}();
+    </script>
+    <!-- END OF ALTCRAFT PIXEL CODE !-->
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #1e293b; background: #f8fafc; padding: 40px 20px; }
+        .wrap { max-width: 520px; margin: 0 auto; }
+        .back { display: inline-block; margin-bottom: 24px; color: #64748b; text-decoration: none; font-size: 14px; }
+        h1 { font-size: 24px; margin-bottom: 6px; }
+        p.lead { color: #64748b; font-size: 14px; margin-bottom: 24px; }
+        form { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 24px; }
+        label { display: block; font-size: 13px; color: #475569; margin-bottom: 6px; }
+        input { width: 100%; font: inherit; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 16px; }
+        input:focus { outline: 2px solid #93c5fd; border-color: #2563eb; }
+        .total { display: flex; justify-content: space-between; font-size: 15px; padding: 12px 0 20px; border-top: 1px solid #e2e8f0; margin-top: 4px; }
+        .total b { font-size: 20px; }
+        button { width: 100%; font: inherit; padding: 12px 20px; border: 0; border-radius: 8px; background: #2563eb; color: #fff; cursor: pointer; font-weight: 600; }
+        .note { margin-top: 20px; padding: 14px 16px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; font-size: 13px; color: #1e40af; }
+        code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <a class="back" href="product/index.html">← К товару</a>
+    <h1>Оформление заказа</h1>
+    <p class="lead">Форма несёт <code>id="checkout"</code> и уходит на страницу благодарности.</p>
+
+    <form id="checkout" method="get" action="thanks.html">
+        <label for="name">Имя</label>
+        <input id="name" name="name" type="text" value="Тестовый покупатель">
+
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" value="test@example.com">
+
+        <label for="sum">Сумма заказа, ₽</label>
+        <input id="sum" name="sum" type="number" value="1500" readonly>
+
+        <div class="total"><span>К оплате</span><b>1500 ₽</b></div>
+        <button type="submit">Оформить заказ</button>
+    </form>
+
+    <div class="note">
+        Кейс 1, шаг 4: если в триггере «Отправка формы» задать время ожидания активации,
+        переход на следующую страницу задержится — в журнале это видно по времени событий.
+    </div>
+</div>
+
+<!-- Журнал событий стенда -->
+<script src="tm-log.js"></script>
+</body>
+</html>
