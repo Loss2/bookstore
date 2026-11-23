@@ -205,9 +205,13 @@
 
   /* --- ошибки --- */
   window.addEventListener('error', function (e) {
-    if (e.target && e.target.tagName === 'SCRIPT') {
-      add('error', 'не загрузился ' + shortUrl(e.target.src || ''));
-      return;
+    if (e.target && e.target !== window && e.target.tagName) {
+      var t = e.target.tagName;
+      if (t === 'SCRIPT' || t === 'IMG' || t === 'LINK' || t === 'IFRAME' || t === 'VIDEO' || t === 'AUDIO') {
+        var src = e.target.src || e.target.href || '';
+        add('error', 'не загрузился <' + t.toLowerCase() + '> ' + shortUrl(src));
+        return;
+      }
     }
     add('error', (e.message || 'ошибка') + ' · ' + (e.filename || '').split('/').pop() + ':' + e.lineno);
   }, true);
