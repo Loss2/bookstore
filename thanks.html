@@ -78,7 +78,9 @@
         if (parts[0]) update._fname = parts[0];
         if (parts.length > 1) update._lname = parts.slice(1).join(' ');
 
-        window.ak_pixel_push('profile_sync', 0, { email: email }, update, 'email', db);
+        window.setTimeout(function () {
+            window.ak_pixel_push('profile_sync', 0, { email: email }, update, 'email', db);
+        }, 600);
     })();
 </script>
 
