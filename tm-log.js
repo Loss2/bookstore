@@ -256,25 +256,45 @@
     };
   })();
 
-  /* --- перехват ak_pixel_push: видно, какие цели реально отправляет контейнер --- */
+  /* --- перехват ak_pixel_push ---
+     Код пикселя может появиться позже журнала (тег в контейнере вставляет его на инициализации),
+     поэтому перехват ставится свойством: любое присваивание window.ak_pixel_push оборачивается. */
   (function () {
-    var orig = window.ak_pixel_push;
-    if (typeof orig !== 'function') return;
-    window.ak_pixel_push = function (goal, value) {
-      add('pixel', 'цель из контейнера: ak_pixel_push("' + goal + '"' +
-        (value === undefined ? '' : ', ' + value) + ')');
-      try {
-        var res = orig.apply(window, arguments);
-        if (res && typeof res.then === 'function') {
-          res.then(null, function (e) {
-            add('error', 'цель ' + goal + ': ' + (e && e.message ? e.message : String(e)));
-          });
+    var real = window.ak_pixel_push;
+
+    function wrap(fn) {
+      if (typeof fn !== 'function') return fn;
+      var wrapped = function (goal, value) {
+        add('pixel', 'цель из контейнера: ak_pixel_push("' + goal + '"' +
+          (value === undefined ? '' : ', ' + value) + ')');
+        try {
+          var res = fn.apply(this, arguments);
+          if (res && typeof res.then === 'function') {
+            res.then(null, function (e) {
+              add('error', 'цель ' + goal + ': ' + (e && e.message ? e.message : String(e)));
+            });
+          }
+          return res;
+        } catch (e) {
+          add('error', 'цель ' + goal + ': ' + (e.message || String(e)));
         }
-        return res;
-      } catch (e) {
-        add('error', 'цель ' + goal + ': ' + (e.message || String(e)));
-      }
-    };
+      };
+      wrapped.__tmWrapped = true;
+      return wrapped;
+    }
+
+    real = wrap(real);
+
+    try {
+      Object.defineProperty(window, 'ak_pixel_push', {
+        configurable: true,
+        get: function () { return real; },
+        set: function (fn) { real = (fn && fn.__tmWrapped) ? fn : wrap(fn); }
+      });
+    } catch (e) {
+      if (typeof real === 'function') window.ak_pixel_push = real;
+      add('error', 'перехват ak_pixel_push не установлен: ' + (e.message || e));
+    }
   })();
 
   /* --- старт --- */
@@ -292,17 +312,25 @@
     var prev = JSON.parse(sessionStorage.getItem('tm-log-v1') || 'null');
     if (prev && prev.items && prev.items.length) {
       var now = location.pathname + location.search;
-      if (prev.page !== now) {
-        items = prev.items.slice(-80);
-        items.push({ kind: 'nav', text: '— переход с ' + prev.page + ' —', t: stamp() });
-      }
+      items = prev.items.slice(-80);
+      items.push({
+        kind: 'nav',
+        text: prev.page === now ? '— перезагрузка той же страницы —' : '— переход с ' + prev.page + ' —',
+        t: stamp()
+      });
     }
   } catch (e) {}
 
   ui = build();
   paint();
   report();
-  window.addEventListener('load', function () {
-    setTimeout(report, 1500);
-  });
+  function snapshot(delay) {
+    setTimeout(function () {
+      var dl = window.acDataLayer;
+      add('info', 'снимок +' + delay + 'мс: acDataLayer=' + (dl ? dl.length : 'нет') +
+        ', ak_pixel_push=' + (typeof window.ak_pixel_push === 'function' ? 'есть' : 'нет'));
+    }, delay);
+  }
+  [1500, 4000, 8000].forEach(snapshot);
+  window.addEventListener('load', function () { [1500, 4000].forEach(snapshot); });
 })();
