@@ -53,7 +53,34 @@
         Эта страница нужна, чтобы проверить, успел ли тег отправки формы уйти до перезагрузки.
         Если в триггере задано время ожидания — вы попадёте сюда с задержкой.
     </div>
+
+    <div class="note">
+        Проверка матчинга с базой профилей: откройте страницу с параметрами
+        <code>?name=Иван&amp;email=ivan@example.com&amp;db=1</code>.
+        Цель <code>profile_sync</code> уйдёт с этим email, и пиксель найдёт существующий профиль
+        или создаст новый, записав в него имя.
+    </div>
 </div>
+
+<script>
+    /* Демонстрация матчинга: email берётся из адресной строки, поэтому пиксель
+       находит или создаёт профиль и обновляет в нём имя. db — ID базы профилей,
+       нужен только если база не выбрана в настройках пикселя. */
+    (function () {
+        var q = new URLSearchParams(location.search);
+        var email = (q.get('email') || '').trim();
+        if (!email || typeof window.ak_pixel_push !== 'function') return;
+
+        var name = (q.get('name') || '').trim();
+        var db = parseInt(q.get('db') || '0', 10) || 0;
+        var parts = name ? name.split(/\s+/) : [];
+        var update = {};
+        if (parts[0]) update._fname = parts[0];
+        if (parts.length > 1) update._lname = parts.slice(1).join(' ');
+
+        window.ak_pixel_push('profile_sync', 0, { email: email }, update, 'email', db);
+    })();
+</script>
 
 <!-- Журнал событий стенда -->
 <script src="tm-log.js"></script>
