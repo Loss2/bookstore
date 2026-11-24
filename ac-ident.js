@@ -83,6 +83,17 @@
             window.sessionStorage.setItem('ac-ident-sent', who.email);
         } catch (e) {}
         window.ak_pixel_push('identify', 0, { email: who.email }, fieldsFromName(who.name), 'email', DB);
+
+        /* Тот же идентификатор отдаём веб-слою: он привязывает сессию посетителя
+           к профилю, и дальше события пикселя находят профиль по сессии. */
+        if (window.acDataLayer && typeof window.acDataLayer.push === 'function') {
+            window.acDataLayer.push({
+                matching: {
+                    matching_mode: 'email',
+                    matching: { email: who.email, db_id: DB }
+                }
+            });
+        }
     }
 
     /* Панель входа */
