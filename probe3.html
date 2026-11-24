@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Проба 3: контейнер + пиксель</title>
+<style>body{font-family:Segoe UI,sans-serif;background:#0f172a;color:#e2e8f0;padding:28px 22px;max-width:860px}pre{font:12px/1.5 Consolas,monospace}a{color:#7dd3fc}</style>
+<script>
+(function(w,d,dl,id){
+  w[dl]=w[dl]||[]; w[dl].push({start:Date.now(),event:'actm-js'});
+  var s=d.createElement('script');
+  s.async=true; s.type='module';
+  s.src='https://pxl-ccrb9qhb8kzxzmmy.dev.altkraft.com/actm/js/actm.js?id='+id;
+  s.addEventListener('load',function(){window.__actm='load'});
+  s.addEventListener('error',function(){window.__actm='error'});
+  var f=d.getElementsByTagName('script')[0];
+  f.parentNode.insertBefore(s,f);
+})(window,document,'acDataLayer','ATM-4ceAGbhFfaZvGHrV7');
+</script>
+<script src="https://pxl-ccrb9qhb8kzxzmmy.dev.altkraft.com/ak_container.js?id=OHw3"></script>
+</head>
+<body>
+<h1>Проба 3: контейнер + пиксель</h1>
+<pre id="out" style="background:#111c31;padding:14px;border-radius:10px;white-space:pre-wrap"></pre>
+<script>
+var lines=[];
+function log(s){lines.push(s);document.getElementById('out').textContent=lines.join('\n');}
+log('страница: '+location.pathname);
+log('ak_pixel_push: '+typeof window.ak_pixel_push);
+log('acDataLayer: '+(window.acDataLayer?window.acDataLayer.length:'нет'));
+setTimeout(function(){
+  log('--- через 4 с ---');
+  log('ak_pixel_push: '+typeof window.ak_pixel_push);
+  log('acDataLayer: '+(window.acDataLayer?window.acDataLayer.length:'нет'));
+  var c=document.querySelector('script[src*="actm/js/actm.js"]');
+  log('скрипт контейнера в DOM: '+(c?'да, src='+c.src.slice(0,60):'НЕТ'));
+},4000);
+</script>
+<p style="margin-top:18px"><a href="index.html">← на главную</a></p>
+</body></html>
