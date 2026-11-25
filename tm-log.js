@@ -339,6 +339,5 @@
         ', ak_pixel_push=' + (typeof window.ak_pixel_push === 'function' ? 'есть' : 'нет'));
     }, delay);
   }
-  [1500, 4000, 8000].forEach(snapshot);
-  window.addEventListener('load', function () { [1500, 4000].forEach(snapshot); });
+  [1500, 4000, 8000, 12000].forEach(snapshot);
 })();
