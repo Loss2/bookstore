@@ -321,9 +321,17 @@
     }
   } catch (e) {}
 
-  ui = build();
-  paint();
-  report();
+  /* Скрипт может стоять в <head>, где <body> ещё нет — панель строим, когда тело появится. */
+  function boot() {
+    if (ui || !document.body) return;
+    ui = build();
+    paint();
+    report();
+  }
+  if (document.body) boot();
+  else if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+  document.addEventListener('DOMContentLoaded', boot);
   function snapshot(delay) {
     setTimeout(function () {
       var dl = window.acDataLayer;
