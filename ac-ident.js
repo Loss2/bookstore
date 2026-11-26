@@ -278,8 +278,9 @@
             return a;
         }
 
-        row.appendChild(link(who.email ? 'Профиль' : 'Войти', '/bookstore/auth.html', !who.email));
-        row.appendChild(link('Проверка', '/bookstore/verify.html', false));
+        var base = /\/product\//.test(location.pathname) ? '../' : '';
+        row.appendChild(link(who.email ? 'Профиль' : 'Войти', base + (who.email ? 'account.html' : 'auth.html'), !who.email));
+        row.appendChild(link('Проверка', base + 'verify.html', false));
         box.appendChild(row);
         document.body.appendChild(box);
     }
