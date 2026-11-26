@@ -111,13 +111,16 @@
     return m ? decodeURIComponent(m[1]) : '';
   }
 
+  var CITY_NAMES = { spb: 'Санкт-Петербург', msk: 'Москва' };
+
   function renderCity() {
     var value = city();
-    document.getElementById('city-value').textContent = value || '— не задано';
+    var label = CITY_NAMES[value] || value;
+    document.getElementById('city-value').textContent = value ? label + ' (' + value + ')' : '— не задано';
     var banner = document.getElementById('delivery-banner');
     if (value) {
       banner.hidden = false;
-      banner.textContent = 'Доставка в ' + value + ' — бесплатно';
+      banner.textContent = 'Доставка в ' + label + ' — бесплатно';
     } else {
       banner.hidden = true;
     }
