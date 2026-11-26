@@ -4,8 +4,29 @@
 <meta charset="utf-8">
 <title>Проверка кейсов — Bookverse</title>
 <link rel="stylesheet" href="stand.css">
-<script src="ac-ident.js"></script>
-<script src="https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/actm.js?id=ATM-4ceAGbhFfaZvGHrV7" async></script>
+    <!-- Менеджер тегов Altcraft: контейнер ATM-4ceAGbhFfaZvGHrV7 -->
+    <script>
+    (function (window, document, dataLayerName, containerID) {
+        window[dataLayerName] = window[dataLayerName] || [];
+        window[dataLayerName].push({ 'start': new Date().getTime(), event: 'actm-js' });
+        var firstScript = document.getElementsByTagName('script')[0];
+        var script = document.createElement('script');
+        var dl = dataLayerName !== 'acDataLayer' ? '&l=' + dataLayerName : '';
+        script.async = true;
+        script.src = 'https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/actm/js/actm.js?id=' + containerID + dl;
+        script.type = 'module';
+        if (firstScript && firstScript.parentNode) {
+            firstScript.parentNode.insertBefore(script, firstScript);
+        }
+    }(window, document, 'acDataLayer', 'ATM-4ceAGbhFfaZvGHrV7'));
+    </script>
+    <script src="https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/ak_container.js?id=OHw3"></script>
+
+    <!-- START OF ALTCRAFT PIXEL CODE !-->
+    <script type="text/javascript">
+    !function(){var e={url:"https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/pixel?k=34FyFph%2BVuyDMPiBaQcTvNk7Jg3MJUl1m%2Fqui6fGQJa6XD9SM9jghQ%3D%3D&s=VTcjeau2FX4%3D",goals:"",value:parseFloat("0"),timeout:parseInt("0"),after_scroll:JSON.parse("false"),auto_load:JSON.parse("true")},o=function(o,t,n,a){var d=[].concat(o).map(function(e){return encodeURIComponent(e)}).join(","),c=encodeURIComponent(String(t||0)),i=encodeURIComponent(n.matching_mode||""),r=encodeURIComponent(n.db_id||0),u=encodeURIComponent(JSON.stringify(n.match||{})),l=encodeURIComponent(JSON.stringify(n.update||{}));setTimeout(function(){(new Image).src=[e.url,"goals="+d,"value="+c,"db_id="+r,"mmode="+i,"match="+u,"update="+l].join("&")},a)},t=!1,n=function(){t||(t=!0,e.after_scroll?document.addEventListener("scroll",function(){(window.pageYOffset||document.documentElement.scrollTop>0)&&o(e.goals,e.value,{},e.timeout)},{once: true}):e.auto_load&&o(e.goals,e.value,{},e.timeout))};"complete"===document.readyState||"interactive"===document.readyState?n():window.addEventListener("load",n);window.ak_pixel_push=function(e,t,n,a,d,c){var i=[];Array.isArray(e)?i=e:i[0]=e,o(i,t,{match:n,update:a,matching_mode:d,db_id:c},0)}}();
+    </script>
+    <!-- END OF ALTCRAFT PIXEL CODE !-->
 </head>
 <body>
 <header class="top">
@@ -37,7 +58,8 @@
       <tbody id="utm-table"><tr><td colspan="2">Читаем адрес…</td></tr></tbody>
     </table>
     <p class="hint">Условие тега: <code>utm_source</code> <b>равно</b> <code>email</code>.
-      При значении <code>email</code> тег срабатывает, при <code>newsletter</code> и без метки — нет.</p>
+      При значении <code>email</code> тег срабатывает, при <code>newsletter</code> и без метки — нет.
+      В <code>match</code> подставляется email из cookie — сначала войдите на странице входа.</p>
     <p class="row"><button class="btn primary" id="send-utm-goal">Отправить цель source_goal</button></p>
   </section>
 
@@ -132,7 +154,7 @@
     }
     if (window.ak_pixel_push) {
       var email = window.BV ? window.BV.getCookie(window.BV.COOKIE.email) : '';
-      window.ak_pixel_push('source_goal', 0, { email: email || '' }, {}, 'email');
+      window.ak_pixel_push('source_goal', 0, { email: email || '' }, {}, 'email', 8);
     }
   });
 
@@ -140,6 +162,7 @@
   renderCity();
 })();
 </script>
+<script src="ac-ident.js"></script>
 
 <!-- Журнал событий стенда -->
 <script src="tm-log.js"></script>
