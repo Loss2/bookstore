@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Проверка кейсов — Bookverse</title>
+<link rel="stylesheet" href="stand.css">
+<script src="ac-ident.js"></script>
+<script src="https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/actm.js?id=ATM-4ceAGbhFfaZvGHrV7" async></script>
+</head>
+<body>
+<header class="top">
+  <a class="logo" href="index.html">Bookverse</a>
+  <nav class="nav-actions">
+    <a href="cases.html">Проверка кейсов</a>
+    <a href="verify.html">Проверка пикселя</a>
+    <a href="account.html">Кабинет</a>
+    <a href="checkout.html">Корзина</a>
+  </nav>
+</header>
+
+<main class="wrap wide">
+  <h1>Проверка кейсов</h1>
+  <p class="lead">Страница показывает, что видит Менеджер тегов на странице: UTM-метки из адреса,
+    cookie с городом и результат срабатывания тега. Удобно для скриншотов и разбора на встрече.</p>
+
+  <section class="card">
+    <h2>Кейс 4. UTM-метка в адресе</h2>
+    <p class="hint">Переменная типа «UTM-метка» берёт значение из адреса страницы. Откройте страницу
+      по одной из ссылок и сравните таблицу.</p>
+    <p class="row">
+      <a class="btn" href="cases.html?utm_source=email&amp;utm_medium=email">?utm_source=email</a>
+      <a class="btn" href="cases.html?utm_source=newsletter&amp;utm_medium=email">?utm_source=newsletter</a>
+      <a class="btn" href="cases.html">без метки</a>
+    </p>
+    <table class="data">
+      <thead><tr><th>Параметр</th><th>Значение на этой странице</th></tr></thead>
+      <tbody id="utm-table"><tr><td colspan="2">Читаем адрес…</td></tr></tbody>
+    </table>
+    <p class="hint">Условие тега: <code>utm_source</code> <b>равно</b> <code>email</code>.
+      При значении <code>email</code> тег срабатывает, при <code>newsletter</code> и без метки — нет.</p>
+    <p class="row"><button class="btn primary" id="send-utm-goal">Отправить цель source_goal</button></p>
+  </section>
+
+  <section class="card">
+    <h2>Кейс 5. Город в cookie</h2>
+    <p class="hint">Переменная типа «Собственный файл cookie» читает значение по имени cookie.
+      Выставите город и посмотрите на баннер.</p>
+    <p class="row">
+      <button class="btn" data-city="spb">delivery_city=spb</button>
+      <button class="btn" data-city="msk">delivery_city=msk</button>
+      <button class="btn" data-city="">удалить cookie</button>
+    </p>
+    <p>Текущее значение cookie: <b id="city-value">—</b></p>
+    <div id="delivery-banner" class="banner" hidden></div>
+    <p class="hint">Баннер собирается тегом «Пользовательский HTML» с кодом
+      <code>&lt;div&gt;Доставка в {{delivery_city}} — бесплатно&lt;/div&gt;</code>.
+      Подставляется ровно то, что лежит в cookie.</p>
+  </section>
+
+  <section class="card">
+    <h2>Кейс 3. Частота и ограничения</h2>
+    <p class="hint">Счётчик ниже растёт на каждое нажатие — по нему видно, что даёт частота
+      «Один раз за страницу» и ограничение «не больше двух показов».</p>
+    <p class="row"><button class="btn" id="bump">Показать баннер акции</button></p>
+    <p>Показов за это открытие страницы: <b id="bump-count">0</b></p>
+    <div id="promo-banner" class="banner" hidden></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var utmKeys = ['utm_source', 'utm_medium', 'utm_campaign'];
+  var params = new URLSearchParams(location.search);
+
+  function renderUtm() {
+    var body = document.getElementById('utm-table');
+    body.innerHTML = '';
+    utmKeys.forEach(function (key) {
+      var tr = document.createElement('tr');
+      var value = params.get(key);
+      tr.innerHTML = '<td><code>' + key + '</code></td><td>' +
+        (value ? '<b>' + value + '</b>' : '<span class="muted">— нет в адресе</span>') + '</td>';
+      body.appendChild(tr);
+    });
+  }
+
+  function city() {
+    var m = document.cookie.match(/(?:^|;\s*)delivery_city=([^;]*)/);
+    return m ? decodeURIComponent(m[1]) : '';
+  }
+
+  function renderCity() {
+    var value = city();
+    document.getElementById('city-value').textContent = value || '— не задано';
+    var banner = document.getElementById('delivery-banner');
+    if (value) {
+      banner.hidden = false;
+      banner.textContent = 'Доставка в ' + value + ' — бесплатно';
+    } else {
+      banner.hidden = true;
+    }
+  }
+
+  document.querySelectorAll('[data-city]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var v = btn.getAttribute('data-city');
+      if (v) {
+        document.cookie = 'delivery_city=' + encodeURIComponent(v) + '; path=/; max-age=2592000';
+      } else {
+        document.cookie = 'delivery_city=; path=/; max-age=0';
+      }
+      renderCity();
+    });
+  });
+
+  var count = 0;
+  document.getElementById('bump').addEventListener('click', function () {
+    count += 1;
+    document.getElementById('bump-count').textContent = count;
+    var banner = document.getElementById('promo-banner');
+    banner.hidden = false;
+    banner.textContent = count === 1
+      ? 'Акция: −20 % на всё до 20:00'
+      : 'Второй показ: тег сработал снова (частота «Без ограничений»)';
+  });
+
+  document.getElementById('send-utm-goal').addEventListener('click', function () {
+    var source = params.get('utm_source') || '';
+    if (source !== 'email') {
+      alert('Тег с фильтром utm_source = email не сработает: в адресе "' + (source || 'нет метки') + '"');
+      return;
+    }
+    if (window.ak_pixel_push) {
+      var email = window.BV ? window.BV.getCookie(window.BV.COOKIE.email) : '';
+      window.ak_pixel_push('source_goal', 0, { email: email || '' }, {}, 'email');
+    }
+  });
+
+  renderUtm();
+  renderCity();
+})();
+</script>
+
+<!-- Журнал событий стенда -->
+<script src="tm-log.js"></script>
+</body>
+</html>
