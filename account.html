@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль | BookVerse</title>
+
+    <!-- Менеджер тегов Altcraft: контейнер ATM-4ceAGbhFfaZvGHrV7 -->
+    <script>
+    (function (window, document, dataLayerName, containerID) {
+        window[dataLayerName] = window[dataLayerName] || [];
+        window[dataLayerName].push({ 'start': new Date().getTime(), event: 'actm-js' });
+        var firstScript = document.getElementsByTagName('script')[0];
+        var script = document.createElement('script');
+        var dl = dataLayerName !== 'acDataLayer' ? '&l=' + dataLayerName : '';
+        script.async = true;
+        script.src = 'https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/actm/js/actm.js?id=' + containerID + dl;
+        script.type = 'module';
+        if (firstScript && firstScript.parentNode) {
+            firstScript.parentNode.insertBefore(script, firstScript);
+        }
+    }(window, document, 'acDataLayer', 'ATM-4ceAGbhFfaZvGHrV7'));
+    </script>
+    <script src="https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/ak_container.js?id=OHw3"></script>
+
+    <!-- START OF ALTCRAFT PIXEL CODE !-->
+    <script type="text/javascript">
+    !function(){var e={url:"https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/pixel?k=34FyFph%2BVuyDMPiBaQcTvNk7Jg3MJUl1m%2Fqui6fGQJa6XD9SM9jghQ%3D%3D&s=VTcjeau2FX4%3D",goals:"",value:parseFloat("0"),timeout:parseInt("0"),after_scroll:JSON.parse("false"),auto_load:JSON.parse("true")},o=function(o,t,n,a){var d=[].concat(o).map(function(e){return encodeURIComponent(e)}).join(","),c=encodeURIComponent(String(t||0)),i=encodeURIComponent(n.matching_mode||""),r=encodeURIComponent(n.db_id||0),u=encodeURIComponent(JSON.stringify(n.match||{})),l=encodeURIComponent(JSON.stringify(n.update||{}));setTimeout(function(){(new Image).src=[e.url,"goals="+d,"value="+c,"db_id="+r,"mmode="+i,"match="+u,"update="+l].join("&")},a)},t=!1,n=function(){t||(t=!0,e.after_scroll?document.addEventListener("scroll",function(){(window.pageYOffset||document.documentElement.scrollTop>0)&&o(e.goals,e.value,{},e.timeout)},{once: true}):e.auto_load&&o(e.goals,e.value,{},e.timeout))};"complete"===document.readyState||"interactive"===document.readyState?n():window.addEventListener("load",n);window.ak_pixel_push=function(e,t,n,a,d,c){var i=[];Array.isArray(e)?i=e:i[0]=e,o(i,t,{match:n,update:a,matching_mode:d,db_id:c},0)}}();
+    </script>
+    <!-- END OF ALTCRAFT PIXEL CODE !-->
+
+    <link rel="stylesheet" href="../stand.css">
+</head>
+<body>
+<div class="wrap">
+    <div class="top">
+        <a href="../index.html">← BookVerse</a>
+        <a href="verify.html">Проверка переменных →</a>
+    </div>
+
+    <h1 id="who">Профиль</h1>
+    <p class="lead" id="lead">Загружаю данные…</p>
+
+    <div class="card">
+        <h2 style="font-size:16px;margin-bottom:12px">Cookie в браузере</h2>
+        <table id="cookies"><tr><td class="muted">Нет данных</td></tr></table>
+    </div>
+
+    <div class="card">
+        <h2 style="font-size:16px;margin-bottom:12px">Слой данных</h2>
+        <table id="layer"><tr><td class="muted">Нет данных</td></tr></table>
+    </div>
+
+    <div class="card">
+        <h2 style="font-size:16px;margin-bottom:12px">Корзина</h2>
+        <div id="cart" class="muted">Пусто</div>
+        <div class="row" style="margin-top:14px">
+            <a class="btn secondary" href="../index.html">В каталог</a>
+            <a class="btn" href="../checkout.html">Оформить заказ</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 style="font-size:16px;margin-bottom:12px">Что можно показать</h2>
+        <table>
+            <tr><th>Переменная</th><th>Источник</th><th>Значение</th></tr>
+            <tr><td>Email посетителя</td><td>Собственный файл cookie → <code>bv_email</code></td><td class="mono" id="v-email">—</td></tr>
+            <tr><td>Город доставки</td><td>Собственный файл cookie → <code>bv_city</code></td><td class="mono" id="v-city">—</td></tr>
+            <tr><td>Имя на странице</td><td>Элемент DOM → <code>#who</code></td><td class="mono" id="v-dom">—</td></tr>
+            <tr><td>Событие входа</td><td>Переменная уровня данных → <code>user_login</code></td><td class="mono" id="v-layer">—</td></tr>
+        </table>
+    </div>
+
+    <div class="row">
+        <button type="button" class="secondary" id="clear">Выйти и удалить cookie</button>
+    </div>
+
+    <div class="note">
+        Значение переменной «Элемент DOM» берётся из текста заголовка <code>#who</code>.
+        Если на этой странице посетитель вошёл, заголовок содержит его email — в переменной
+        будет то же самое. Это удобно, чтобы показать переменную без cookie.
+    </div>
+</div>
+
+<script src="../tm-log.js"></script>
+<script src="../ac-ident.js"></script>
+<script>
+(function () {
+    function cell(text, mono) {
+        var td = document.createElement('td');
+        td.textContent = text;
+        if (mono) td.className = 'mono';
+        return td;
+    }
+
+    function renderCookies() {
+        var table = document.getElementById('cookies');
+        var all = window.BV ? window.BV.cookies() : {};
+        var keys = Object.keys(all).filter(function (k) { return k.indexOf('bv_') === 0; });
+        if (!keys.length) {
+            table.innerHTML = '<tr><td class="muted">Ни одной cookie стенда — сначала войдите на странице ' +
+                '<a href="auth.html">Вход</a>.</td></tr>';
+            return;
+        }
+        table.innerHTML = '<tr><th>Имя</th><th>Значение</th><th>Срок</th></tr>';
+        keys.sort().forEach(function (k) {
+            var tr = document.createElement('tr');
+            tr.appendChild(cell(k, true));
+            tr.appendChild(cell(all[k] || '—', true));
+            tr.appendChild(cell(k === 'bv_order_total' || k === 'bv_order_id' ? '3 дня' : '30 дней'));
+            table.appendChild(tr);
+        });
+    }
+
+    function renderLayer() {
+        var table = document.getElementById('layer');
+        var events = (window.acDataLayer || []).filter(function (item) { return item && item.event; });
+        if (!events.length) {
+            table.innerHTML = '<tr><td class="muted">Событий нет. Войдите или добавьте товар в корзину.</td></tr>';
+            return;
+        }
+        table.innerHTML = '<tr><th>Событие</th><th>Данные</th></tr>';
+        events.forEach(function (item) {
+            var tr = document.createElement('tr');
+            tr.appendChild(cell(item.event, true));
+            var copy = {};
+            Object.keys(item).forEach(function (k) { if (k !== 'event') copy[k] = item[k]; });
+            tr.appendChild(cell(JSON.stringify(copy), true));
+            table.appendChild(tr);
+        });
+    }
+
+    function renderCart() {
+        var cart = window.BV ? window.BV.cart() : { items: [], total: 0 };
+        var box = document.getElementById('cart');
+        if (!cart.items.length) {
+            box.textContent = 'Пусто';
+            return;
+        }
+        box.innerHTML = '';
+        var list = document.createElement('ul');
+        list.style.cssText = 'margin:0 0 8px 18px;font-size:14px';
+        cart.items.forEach(function (item) {
+            var li = document.createElement('li');
+            li.textContent = item.name + ' — ' + item.price + ' ₽';
+            list.appendChild(li);
+        });
+        box.appendChild(list);
+        var total = document.createElement('div');
+        total.innerHTML = 'Итого: <strong>' + cart.total + ' ₽</strong>';
+        box.appendChild(total);
+    }
+
+    function renderWho() {
+        var who = window.BV ? window.BV.profile() : { email: '', name: '', city: '' };
+        var title = document.getElementById('who');
+        var lead = document.getElementById('lead');
+        if (who.email) {
+            title.textContent = who.email;
+            lead.textContent = 'Вошли как ' + (who.name || 'без имени') +
+                '. Эти значения записаны в cookie и доступны переменным Менеджера тегов.';
+        } else {
+            title.textContent = 'Вы не вошли';
+            lead.innerHTML = 'Cookie <code>bv_email</code> не выставлена — переменная получит пустое значение. ' +
+                '<a href="auth.html">Войти</a>.';
+        }
+        document.getElementById('v-email').textContent = who.email || '—';
+        document.getElementById('v-city').textContent = who.city || '—';
+        document.getElementById('v-dom').textContent = title.textContent;
+        var loginEvent = (window.acDataLayer || []).filter(function (i) { return i && (i.event === 'user_login' || i.event === 'user_data'); }).pop();
+        document.getElementById('v-layer').textContent = loginEvent ? loginEvent.user_email : '—';
+    }
+
+    function renderAll() {
+        renderWho();
+        renderCookies();
+        renderLayer();
+        renderCart();
+    }
+
+    document.getElementById('clear').addEventListener('click', function () {
+        if (window.BV) window.BV.logout();
+        renderAll();
+    });
+
+    renderAll();
+    window.setTimeout(renderAll, 1200);
+})();
+</script>
+</body>
+</html>

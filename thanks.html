@@ -45,13 +45,12 @@
 <div class="wrap">
     <div class="tick">✓</div>
     <h1>Спасибо, заказ оформлен</h1>
-    <p>Номер заказа TM-1500. Если цель <code>purchase</code> со значением 1500 зарегистрировалась,
-       она появится в отчёте «Цели» в показателе «Доход».</p>
+    <p id="summary">Загружаю данные заказа…</p>
     <a href="index.html">← Вернуться в магазин</a>
 
-    <div class="note">
-        Эта страница нужна, чтобы проверить, успел ли тег отправки формы уйти до перезагрузки.
-        Если в триггере задано время ожидания — вы попадёте сюда с задержкой.
+    <div class="note" id="where">
+        Сумма и email для цели <code>purchase</code> берутся из cookie <code>bv_order_total</code>
+        и <code>bv_email</code> — тех же, что читает переменная типа «Собственный файл cookie».
     </div>
 
     <div class="note">
@@ -62,30 +61,52 @@
     </div>
 </div>
 
-<script>
-    /* Демонстрация матчинга: email берётся из адресной строки, поэтому пиксель
-       находит или создаёт профиль и обновляет в нём имя. db — ID базы профилей,
-       нужен только если база не выбрана в настройках пикселя. */
-    (function () {
-        var q = new URLSearchParams(location.search);
-        var email = (q.get('email') || '').trim();
-        if (!email || typeof window.ak_pixel_push !== 'function') return;
 
-        var name = (q.get('name') || '').trim();
-        var db = parseInt(q.get('db') || '8', 10) || 0;
-        var parts = name ? name.split(/\s+/) : [];
-        var update = {};
-        if (parts[0]) update._fname = parts[0];
-        if (parts.length > 1) update._lname = parts.slice(1).join(' ');
-
-        window.setTimeout(function () {
-            window.ak_pixel_push('profile_sync', 0, { email: email }, update, 'email', db);
-        }, 600);
-    })();
-</script>
 
 <!-- Журнал событий стенда -->
 <script src="tm-log.js"></script>
 <script src="ac-ident.js"></script>
+<script>
+(function () {
+    var who = window.BV ? window.BV.profile() : { email: '', name: '' };
+    var order = window.BV ? window.BV.lastOrder() : { total: '', id: '' };
+    var total = parseFloat(order.total || '1500');
+    var number = order.id || 'TM-1500';
+
+    var summary = document.getElementById('summary');
+    if (order.total) {
+        summary.innerHTML = 'Заказ <strong>' + number + '</strong> на сумму <strong>' + total +
+            ' ₽</strong>. Цель <code>purchase</code> со значением ' + total +
+            ' появится в отчёте «Цели» в показателе «Доход».';
+    } else {
+        summary.innerHTML = 'Cookie заказа нет — сумма взята по умолчанию (1500 ₽). ' +
+            'Чтобы проверить переменную, оформите заказ через <a href="checkout.html">форму</a>.';
+    }
+
+    /* Цель purchase: значение — сумма из cookie, match — email из cookie. */
+    window.setTimeout(function () {
+        if (typeof window.ak_pixel_push !== 'function') return;
+        var match = who.email ? { email: who.email } : undefined;
+        window.ak_pixel_push('purchase', total, match, {}, who.email ? 'email' : undefined, 8);
+    }, 600);
+
+    /* Демонстрация матчинга из адреса страницы: ?email=...&name=...&db=1 */
+    var q = new URLSearchParams(location.search);
+    var fromUrl = (q.get('email') || '').trim();
+    if (!fromUrl || typeof window.ak_pixel_push !== 'function') return;
+
+    var name = (q.get('name') || '').trim();
+    var db = parseInt(q.get('db') || '8', 10) || 0;
+    var parts = name ? name.split(/\s+/) : [];
+    var update = {};
+    if (parts[0]) update._fname = parts[0];
+    if (parts.length > 1) update._lname = parts.slice(1).join(' ');
+
+    window.setTimeout(function () {
+        window.ak_pixel_push('profile_sync', 0, { email: fromUrl }, update, 'email', db);
+    }, 900);
+})();
+</script>
+
 </body>
 </html>

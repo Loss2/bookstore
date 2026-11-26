@@ -639,12 +639,11 @@
             <a href="#">Sales</a>
         </div>
         <div class="nav-actions">
-            <button class="btn-cart">
+            <a href="verify.html" style="font-size:14px;color:#334155;text-decoration:none;margin-right:14px">Проверка</a>
+            <a href="account.html" id="nav-account" style="font-size:14px;color:#334155;text-decoration:none;margin-right:14px">Войти</a>
+            <button class="btn-cart" onclick="location.href='checkout.html'">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="cart-count">0</span>
-            </button>
-            <button class="btn-search">
-                <i class="fas fa-search"></i>
             </button>
         </div>
     </nav>
@@ -1158,7 +1157,26 @@
         });
 
     </script>
-    <!-- Журнал событий стенда -->
+    <script>
+(function () {
+    function sync() {
+        if (!window.BV) return;
+        var cart = window.BV.cart();
+        var counter = document.querySelector('.cart-count');
+        if (counter) counter.textContent = cart.items.length;
+        var who = window.BV.profile();
+        var link = document.getElementById('nav-account');
+        if (link) {
+            link.textContent = who.email ? who.email.split('@')[0] : 'Войти';
+            link.href = who.email ? 'account.html' : 'auth.html';
+        }
+    }
+    sync();
+    window.setTimeout(sync, 800);
+    window.addEventListener('pageshow', sync);
+})();
+</script>
+<!-- Журнал событий стенда -->
     <script src="tm-log.js"></script>
     <script src="ac-ident.js"></script>
 

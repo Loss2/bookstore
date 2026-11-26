@@ -1,30 +1,91 @@
-/* Идентификация посетителя на стенде.
-   Пока email неизвестен — цели уходят анонимно, как раньше.
-   Как только email введён здесь (или пришёл в адресе страницы ?email=),
-   каждый вызов ak_pixel_push автоматически получает match/update/matching_mode/db_id,
-   поэтому все действия складываются в один профиль базы 8. */
-(function () {
+/* Стенд BookVerse для проверки Менеджера тегов Altcraft.
+ *
+ * Данные посетителя живут там же, где на обычном сайте: в cookie.
+ * Это нужно, чтобы проверить переменные типа «Собственный файл cookie»,
+ * «Переменная уровня данных» и «Элемент DOM» — каждая берёт значение
+ * из своего источника, а не из адреса страницы.
+ *
+ * Cookie, которые выставляет стенд:
+ *   bv_email        email вошедшего посетителя      (auth.html)
+ *   bv_name         имя                              (auth.html)
+ *   bv_city         город доставки                   (auth.html)
+ *   bv_order_total  сумма последнего заказа          (checkout.html)
+ *   bv_order_id     номер последнего заказа          (checkout.html)
+ *
+ * Слой данных (window.acDataLayer): user_login, add_to_cart, checkout_start.
+ */
+(function (window, document) {
     'use strict';
 
-    var KEY = 'ac-identity';
+    var COOKIE = {
+        email: 'bv_email',
+        name: 'bv_name',
+        city: 'bv_city',
+        orderTotal: 'bv_order_total',
+        orderId: 'bv_order_id'
+    };
     var DB = 8;
+    var CART_KEY = 'bv-cart';
+    var IDENT_KEY = 'ac-identity';
+    var DAY = 864e5;
 
-    function read() {
-        try {
-            return JSON.parse(window.localStorage.getItem(KEY) || 'null');
-        } catch (e) {
-            return null;
+    /* ---------- cookie ---------- */
+
+    function setCookie(name, value, days) {
+        var expires = '';
+        if (days) {
+            var d = new Date();
+            d.setTime(d.getTime() + days * DAY);
+            expires = '; expires=' + d.toUTCString();
         }
+        document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/; SameSite=Lax';
     }
 
-    function write(value) {
-        try {
-            if (value) {
-                window.localStorage.setItem(KEY, JSON.stringify(value));
-            } else {
-                window.localStorage.removeItem(KEY);
+    function getCookie(name) {
+        var parts = document.cookie ? document.cookie.split('; ') : [];
+        for (var i = 0; i < parts.length; i++) {
+            var eq = parts[i].indexOf('=');
+            if (eq > 0 && parts[i].slice(0, eq) === name) {
+                var raw = parts[i].slice(eq + 1);
+                try { return decodeURIComponent(raw); } catch (e) { return raw; }
             }
-        } catch (e) {}
+        }
+        return '';
+    }
+
+    function delCookie(name) {
+        document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+    }
+
+    function allCookies() {
+        var out = {};
+        var parts = document.cookie ? document.cookie.split('; ') : [];
+        for (var i = 0; i < parts.length; i++) {
+            var eq = parts[i].indexOf('=');
+            if (eq > 0) {
+                var k = parts[i].slice(0, eq);
+                var v = parts[i].slice(eq + 1);
+                try { out[k] = decodeURIComponent(v); } catch (e) { out[k] = v; }
+            }
+        }
+        return out;
+    }
+
+    /* ---------- профиль ---------- */
+
+    function profile() {
+        var email = getCookie(COOKIE.email);
+        if (!email) {
+            try {
+                var ls = JSON.parse(window.localStorage.getItem(IDENT_KEY) || 'null');
+                if (ls && ls.email) email = ls.email;
+            } catch (e) {}
+        }
+        return {
+            email: email,
+            name: getCookie(COOKIE.name),
+            city: getCookie(COOKIE.city)
+        };
     }
 
     function fieldsFromName(name) {
@@ -35,23 +96,125 @@
         return update;
     }
 
-    var params = new URLSearchParams(location.search);
-    var fromUrl = (params.get('email') || '').trim();
-    if (fromUrl) {
-        var existing = read();
-        if (!existing || existing.email !== fromUrl) {
-            write({ email: fromUrl, name: (params.get('name') || '').trim() });
+    function pushLayer(payload) {
+        window.acDataLayer = window.acDataLayer || [];
+        window.acDataLayer.push(payload);
+    }
+
+    function login(email, name, city) {
+        setCookie(COOKIE.email, email, 30);
+        setCookie(COOKIE.name, name || '', 30);
+        setCookie(COOKIE.city, city || '', 30);
+        try {
+            window.localStorage.setItem(IDENT_KEY, JSON.stringify({ email: email, name: name || '' }));
+            window.sessionStorage.removeItem('ac-ident-sent');
+        } catch (e) {}
+        pushLayer({
+            event: 'user_login',
+            user_email: email,
+            user_name: name || '',
+            user_city: city || ''
+        });
+        identify();
+    }
+
+    function logout() {
+        delCookie(COOKIE.email);
+        delCookie(COOKIE.name);
+        delCookie(COOKIE.city);
+        try {
+            window.localStorage.removeItem(IDENT_KEY);
+            window.sessionStorage.removeItem('ac-ident-sent');
+        } catch (e) {}
+    }
+
+    /* ---------- корзина и заказ ---------- */
+
+    function cart() {
+        try {
+            return JSON.parse(window.localStorage.getItem(CART_KEY) || 'null') || { items: [], total: 0 };
+        } catch (e) {
+            return { items: [], total: 0 };
         }
     }
 
-    /* Оборачиваем отправку целей: подставляем идентификатор, если он известен. */
+    function saveCart(value) {
+        try { window.localStorage.setItem(CART_KEY, JSON.stringify(value)); } catch (e) {}
+    }
+
+    function addToCart(item) {
+        var current = cart();
+        current.items.push(item);
+        current.total += Number(item.price) || 0;
+        saveCart(current);
+        pushLayer({
+            event: 'add_to_cart',
+            item_id: item.id,
+            item_name: item.name,
+            value: Number(item.price) || 0
+        });
+        return current;
+    }
+
+    function clearCart() {
+        saveCart({ items: [], total: 0 });
+    }
+
+    function lastOrder() {
+        return { total: getCookie(COOKIE.orderTotal), id: getCookie(COOKIE.orderId) };
+    }
+
+    function saveOrder(total, id) {
+        setCookie(COOKIE.orderTotal, String(total), 3);
+        setCookie(COOKIE.orderId, String(id), 3);
+    }
+
+    /* ---------- идентификация для пикселя ---------- */
+
+    /* На каждой странице отдаём контейнеру данные вошедшего посетителя:
+       так переменная уровня данных получает значение не только в момент входа. */
+    function announce() {
+        var who = profile();
+        if (!who.email) return;
+        var events = window.acDataLayer || [];
+        for (var i = 0; i < events.length; i++) {
+            if (events[i] && events[i].event === 'user_data' && events[i].user_email === who.email) return;
+        }
+        pushLayer({
+            event: 'user_data',
+            user_email: who.email,
+            user_name: who.name || '',
+            user_city: who.city || ''
+        });
+    }
+
+    function identify() {
+        var who = profile();
+        if (!who.email || typeof window.ak_pixel_push !== 'function') return;
+        try {
+            if (window.sessionStorage.getItem('ac-ident-sent') === who.email) return;
+            window.sessionStorage.setItem('ac-ident-sent', who.email);
+        } catch (e) {}
+        window.ak_pixel_push('identify', 0, { email: who.email }, fieldsFromName(who.name), 'email', DB);
+
+        /* Тот же идентификатор отдаём веб-слою: он привязывает сессию посетителя
+           к профилю, и дальше события пикселя находят профиль по сессии. */
+        pushLayer({
+            matching: {
+                matching_mode: 'email',
+                matching: { email: who.email, db_id: DB }
+            }
+        });
+    }
+
+    /* Подставляем идентификатор во все цели, чтобы действия складывались в один профиль. */
     function wrap() {
         if (typeof window.ak_pixel_push !== 'function' || window.ak_pixel_push.__acIdent) return false;
         var original = window.ak_pixel_push;
 
         var wrapper = function (goals, value, match, update, mode, db) {
-            var who = read();
-            if (who && who.email) {
+            var who = profile();
+            if (who.email) {
                 match = match || { email: who.email };
                 update = update || fieldsFromName(who.name);
                 mode = mode || 'email';
@@ -60,6 +223,8 @@
             return original.call(window, goals, value, match, update, mode, db);
         };
         wrapper.__acIdent = true;
+        /* Флаг журнала: иначе он обернёт нашу обёртку ещё раз и запишет цель дважды. */
+        wrapper.__tmWrapped = true;
         window.ak_pixel_push = wrapper;
         return true;
     }
@@ -74,113 +239,78 @@
         }
     }, 250);
 
-    /* Сообщаем платформе, кто это, чтобы профиль появился сразу после входа. */
-    function identify() {
-        var who = read();
-        if (!who || !who.email || typeof window.ak_pixel_push !== 'function') return;
-        try {
-            if (window.sessionStorage.getItem('ac-ident-sent') === who.email) return;
-            window.sessionStorage.setItem('ac-ident-sent', who.email);
-        } catch (e) {}
-        window.ak_pixel_push('identify', 0, { email: who.email }, fieldsFromName(who.name), 'email', DB);
+    /* ---------- панель на странице ---------- */
 
-        /* Тот же идентификатор отдаём веб-слою: он привязывает сессию посетителя
-           к профилю, и дальше события пикселя находят профиль по сессии. */
-        if (window.acDataLayer && typeof window.acDataLayer.push === 'function') {
-            window.acDataLayer.push({
-                matching: {
-                    matching_mode: 'email',
-                    matching: { email: who.email, db_id: DB }
-                }
-            });
-        }
-    }
-
-    /* Панель входа */
-    function render() {
-        var who = read();
+    function panel() {
+        if (document.getElementById('bv-panel') || !document.body) return;
+        var who = profile();
         var box = document.createElement('div');
-        box.id = 'ac-ident';
+        box.id = 'bv-panel';
         box.style.cssText = [
             'position:fixed', 'left:12px', 'bottom:12px', 'z-index:9999',
             'background:#fff', 'border:1px solid #d0d5dd', 'border-radius:10px',
             'box-shadow:0 6px 20px rgba(16,24,40,.12)', 'padding:10px 12px',
             'font:13px/1.4 -apple-system,Segoe UI,Roboto,Arial,sans-serif', 'color:#1d2939',
-            'max-width:320px'
+            'max-width:330px'
         ].join(';');
 
         var title = document.createElement('div');
-        title.style.cssText = 'font-weight:600;margin-bottom:6px';
-        title.textContent = 'Профиль для записи событий';
+        title.style.cssText = 'font-weight:600;margin-bottom:4px';
+        title.textContent = 'Посетитель';
         box.appendChild(title);
 
         var state = document.createElement('div');
-        state.style.cssText = 'margin-bottom:8px;color:#475467';
-        state.textContent = who && who.email ? 'вошёл как ' + who.email : 'не выбран — цели уходят анонимно';
+        state.style.cssText = 'color:#475467;margin-bottom:8px';
+        state.textContent = who.email
+            ? who.email + (who.city ? ' · ' + who.city : '')
+            : 'анонимный — cookie bv_email не выставлена';
         box.appendChild(state);
 
         var row = document.createElement('div');
-        row.style.cssText = 'display:flex;gap:6px';
+        row.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap';
 
-        var email = document.createElement('input');
-        email.type = 'email';
-        email.placeholder = 'email посетителя';
-        email.value = who && who.email ? who.email : '';
-        email.style.cssText = 'flex:1;min-width:0;padding:6px 8px;border:1px solid #d0d5dd;border-radius:6px;font:inherit';
+        function link(text, href, primary) {
+            var a = document.createElement('a');
+            a.textContent = text;
+            a.href = href;
+            a.style.cssText = 'padding:6px 10px;border-radius:6px;text-decoration:none;font:inherit;' +
+                (primary ? 'background:#175cd3;color:#fff' : 'border:1px solid #d0d5dd;color:#344054;background:#fff');
+            return a;
+        }
 
-        var name = document.createElement('input');
-        name.type = 'text';
-        name.placeholder = 'имя';
-        name.value = who && who.name ? who.name : '';
-        name.style.cssText = 'width:88px;padding:6px 8px;border:1px solid #d0d5dd;border-radius:6px;font:inherit';
-
-        row.appendChild(email);
-        row.appendChild(name);
+        row.appendChild(link(who.email ? 'Профиль' : 'Войти', '/bookstore/auth.html', !who.email));
+        row.appendChild(link('Проверка', '/bookstore/verify.html', false));
         box.appendChild(row);
-
-        var actions = document.createElement('div');
-        actions.style.cssText = 'display:flex;gap:6px;margin-top:6px';
-
-        var login = document.createElement('button');
-        login.type = 'button';
-        login.textContent = 'Войти';
-        login.style.cssText = 'padding:6px 10px;border:0;border-radius:6px;background:#175cd3;color:#fff;font:inherit;cursor:pointer';
-
-        var logout = document.createElement('button');
-        logout.type = 'button';
-        logout.textContent = 'Выйти';
-        logout.style.cssText = 'padding:6px 10px;border:1px solid #d0d5dd;border-radius:6px;background:#fff;color:#344054;font:inherit;cursor:pointer';
-
-        actions.appendChild(login);
-        actions.appendChild(logout);
-        box.appendChild(actions);
-
-        login.addEventListener('click', function () {
-            var value = (email.value || '').trim();
-            if (!value) {
-                email.focus();
-                return;
-            }
-            write({ email: value, name: (name.value || '').trim() });
-            if (typeof window.ak_pixel_push === 'function') {
-                window.ak_pixel_push('identify', 0, { email: value }, fieldsFromName(name.value), 'email', DB);
-            }
-            box.remove();
-            render();
-        });
-
-        logout.addEventListener('click', function () {
-            write(null);
-            box.remove();
-            render();
-        });
-
         document.body.appendChild(box);
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', render);
-    } else {
-        render();
+    function boot() {
+        panel();
+        announce();
     }
-})();
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
+
+    window.BV = {
+        cookies: allCookies,
+        getCookie: getCookie,
+        setCookie: setCookie,
+        delCookie: delCookie,
+        COOKIE: COOKIE,
+        profile: profile,
+        login: login,
+        logout: logout,
+        cart: cart,
+        addToCart: addToCart,
+        clearCart: clearCart,
+        lastOrder: lastOrder,
+        saveOrder: saveOrder,
+        pushLayer: pushLayer,
+        identify: identify,
+        announce: announce
+    };
+})(window, document);

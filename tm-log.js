@@ -181,6 +181,25 @@
     new PerformanceObserver(function (list) {
       list.getEntries().forEach(function (e) {
         if (!/\/pixel\?|goals=|actm\/js\/actm\.js|ak_container\.js|event\/post/.test(e.name)) return;
+
+        /* Запрос пикселя разбираем по частям: видно, что именно ушло в платформу. */
+        if (/\/pixel\?/.test(e.name)) {
+          var params = null;
+          try { params = new URL(e.name).searchParams; } catch (err) { params = null; }
+          if (params) {
+            var bits = [];
+            var goals = (params.get('goals') || '').replace(/,/g, ', ');
+            bits.push('goals=' + (goals || '—'));
+            bits.push('value=' + (params.get('value') || '0'));
+            if (params.get('match') && params.get('match') !== '{}') bits.push('match=' + params.get('match'));
+            if (params.get('update') && params.get('update') !== '{}') bits.push('update=' + params.get('update'));
+            if (params.get('mmode')) bits.push('mmode=' + params.get('mmode'));
+            if (params.get('db_id') && params.get('db_id') !== '0') bits.push('db_id=' + params.get('db_id'));
+            add('pixel', bits.join('  '));
+            return;
+          }
+        }
+
         var m = /[?&]goals=([^&]*)/.exec(e.name);
         var g = m ? decodeURIComponent(m[1]).replace(/,/g, ', ') : '';
         add(classify(e.name), shortUrl(e.name) + (g ? '  [' + g + ']' : ''));
@@ -264,9 +283,15 @@
 
     function wrap(fn) {
       if (typeof fn !== 'function') return fn;
-      var wrapped = function (goal, value) {
-        add('pixel', 'цель из контейнера: ak_pixel_push("' + goal + '"' +
-          (value === undefined ? '' : ', ' + value) + ')');
+      var wrapped = function (goal, value, match, update, mode, db) {
+        var parts = [];
+        if (match && Object.keys(match).length) parts.push('match=' + JSON.stringify(match));
+        if (update && Object.keys(update).length) parts.push('update=' + JSON.stringify(update));
+        if (mode) parts.push('mmode=' + mode);
+        if (db) parts.push('db_id=' + db);
+        add('pixel', 'ak_pixel_push("' + goal + '"' +
+          (value === undefined ? '' : ', ' + value) + ')' +
+          (parts.length ? '  ' + parts.join(' ') : '  без match/update'));
         try {
           var res = fn.apply(this, arguments);
           if (res && typeof res.then === 'function') {

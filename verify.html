@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Проверка переменных | BookVerse</title>
+
+    <!-- Менеджер тегов Altcraft: контейнер ATM-4ceAGbhFfaZvGHrV7 -->
+    <script>
+    (function (window, document, dataLayerName, containerID) {
+        window[dataLayerName] = window[dataLayerName] || [];
+        window[dataLayerName].push({ 'start': new Date().getTime(), event: 'actm-js' });
+        var firstScript = document.getElementsByTagName('script')[0];
+        var script = document.createElement('script');
+        var dl = dataLayerName !== 'acDataLayer' ? '&l=' + dataLayerName : '';
+        script.async = true;
+        script.src = 'https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/actm/js/actm.js?id=' + containerID + dl;
+        script.type = 'module';
+        if (firstScript && firstScript.parentNode) {
+            firstScript.parentNode.insertBefore(script, firstScript);
+        }
+    }(window, document, 'acDataLayer', 'ATM-4ceAGbhFfaZvGHrV7'));
+    </script>
+    <script src="https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/ak_container.js?id=OHw3"></script>
+
+    <!-- START OF ALTCRAFT PIXEL CODE !-->
+    <script type="text/javascript">
+    !function(){var e={url:"https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/pixel?k=34FyFph%2BVuyDMPiBaQcTvNk7Jg3MJUl1m%2Fqui6fGQJa6XD9SM9jghQ%3D%3D&s=VTcjeau2FX4%3D",goals:"",value:parseFloat("0"),timeout:parseInt("0"),after_scroll:JSON.parse("false"),auto_load:JSON.parse("true")},o=function(o,t,n,a){var d=[].concat(o).map(function(e){return encodeURIComponent(e)}).join(","),c=encodeURIComponent(String(t||0)),i=encodeURIComponent(n.matching_mode||""),r=encodeURIComponent(n.db_id||0),u=encodeURIComponent(JSON.stringify(n.match||{})),l=encodeURIComponent(JSON.stringify(n.update||{}));setTimeout(function(){(new Image).src=[e.url,"goals="+d,"value="+c,"db_id="+r,"mmode="+i,"match="+u,"update="+l].join("&")},a)},t=!1,n=function(){t||(t=!0,e.after_scroll?document.addEventListener("scroll",function(){(window.pageYOffset||document.documentElement.scrollTop>0)&&o(e.goals,e.value,{},e.timeout)},{once: true}):e.auto_load&&o(e.goals,e.value,{},e.timeout))};"complete"===document.readyState||"interactive"===document.readyState?n():window.addEventListener("load",n);window.ak_pixel_push=function(e,t,n,a,d,c){var i=[];Array.isArray(e)?i=e:i[0]=e,o(i,t,{match:n,update:a,matching_mode:d,db_id:c},0)}}();
+    </script>
+    <!-- END OF ALTCRAFT PIXEL CODE !-->
+
+    <link rel="stylesheet" href="stand.css">
+</head>
+<body>
+<div class="wrap">
+    <div class="top">
+        <a href="index.html">← BookVerse</a>
+        <a href="account.html">Профиль</a>
+    </div>
+
+    <h1>Проверка переменных</h1>
+    <p class="lead">
+        Страница показывает, какие значения лежат в браузере прямо сейчас и что из них
+        получит каждая переменная Менеджера тегов. Значения читаются теми же способами,
+        что и в контейнере: cookie, слой данных, DOM.
+    </p>
+
+    <div class="card">
+        <h2 style="font-size:16px;margin-bottom:12px">Источники данных</h2>
+        <div id="state" class="muted">Читаю…</div>
+    </div>
+
+    <div class="card">
+        <h2 style="font-size:16px;margin-bottom:12px">Что получит переменная</h2>
+        <table>
+            <thead>
+                <tr><th>Тип переменной</th><th>Настройка в контейнере</th><th>Значение сейчас</th></tr>
+            </thead>
+            <tbody id="vars"></tbody>
+        </table>
+        <div class="note">
+            Имена cookie и селекторы ниже — это то, что нужно вписать в настройках переменной.
+            Например, для «Собственный файл cookie» имя — <code>bv_email</code>,
+            для «Элемент DOM» — селектор <code>#price</code>.
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 style="font-size:16px;margin-bottom:12px">Действия</h2>
+        <div class="row">
+            <button type="button" id="test-goal">Отправить тестовую цель</button>
+            <button type="button" class="secondary" id="fill">Записать тестовые cookie</button>
+            <button type="button" class="secondary" id="reset">Очистить cookie и слой</button>
+        </div>
+        <div class="note" id="hint">
+            «Тестовая цель» вызывает <code>ak_pixel_push('test_goal', 42)</code>.
+            Если посетитель вошёл, в запрос автоматически попадут <code>match</code>,
+            <code>update</code>, <code>mmode</code> и <code>db_id</code> — их видно в журнале внизу.
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 style="font-size:16px;margin-bottom:12px">Сценарий на 5 минут</h2>
+        <ol style="margin-left:18px;font-size:14px;line-height:1.9">
+            <li>Откройте <a href="auth.html">Вход</a>, укажите email и город, войдите.</li>
+            <li>Вернитесь сюда: в таблице появились значения из cookie.</li>
+            <li>Нажмите «Отправить тестовую цель» и откройте журнал внизу.</li>
+            <li>В журнале найдите строку <code>pixel</code>: в <code>match</code> будет email, в <code>update</code> — имя.</li>
+            <li>В платформе откройте профиль с этим email — цель и поля пришли из переменных.</li>
+        </ol>
+    </div>
+
+    <div class="note">
+        Данные не уходят на сторонние сервисы: cookie пишет сам стенд, а события принимает
+        только контейнер Altcraft на dev-стенде.
+    </div>
+</div>
+
+<script src="tm-log.js"></script>
+<script src="ac-ident.js"></script>
+<script>
+(function () {
+    function readDom(selector) {
+        var node = document.querySelector(selector);
+        if (!node) return null;
+        return (node.value || node.textContent || '').trim() || null;
+    }
+
+    function flags() {
+        var who = window.BV ? window.BV.profile() : {};
+        var cookies = window.BV ? window.BV.cookies() : {};
+        var events = (window.acDataLayer || []).filter(function (i) { return i && i.event; });
+        return {
+            email: who.email || '',
+            name: who.name || '',
+            city: who.city || '',
+            cookies: cookies,
+            events: events,
+            pixel: typeof window.ak_pixel_push === 'function',
+            container: !!window.actm || !!document.querySelector('script[src*="actm.js"]')
+        };
+    }
+
+    function badge(ok, textOk, textBad) {
+        var span = document.createElement('span');
+        span.className = ok ? 'ok' : 'bad';
+        span.textContent = ok ? textOk : textBad;
+        return span;
+    }
+
+    function row(parent, cells) {
+        var tr = document.createElement('tr');
+        cells.forEach(function (value) {
+            var td = document.createElement('td');
+            if (value && value.nodeType) td.appendChild(value);
+            else {
+                td.textContent = value === null || value === undefined || value === '' ? '—' : String(value);
+                if (/^bv_|^#|^user_login|^\{/.test(String(value))) td.className = 'mono';
+            }
+            tr.appendChild(td);
+        });
+        parent.appendChild(tr);
+    }
+
+    function renderState() {
+        var f = flags();
+        var box = document.getElementById('state');
+        box.innerHTML = '';
+        box.className = '';
+
+        var table = document.createElement('table');
+        table.innerHTML = '<tr><th>Проверка</th><th>Результат</th></tr>';
+
+        function line(label, ok, detail) {
+            var tr = document.createElement('tr');
+            var td1 = document.createElement('td');
+            td1.textContent = label;
+            var td2 = document.createElement('td');
+            td2.appendChild(badge(ok, 'есть', 'нет'));
+            if (detail) {
+                var d = document.createElement('span');
+                d.className = 'mono';
+                d.style.marginLeft = '8px';
+                d.textContent = detail;
+                td2.appendChild(d);
+            }
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            table.appendChild(tr);
+        }
+
+        line('Пиксель загружен (ak_pixel_push)', f.pixel);
+        line('Контейнер actm.js загружен', f.container);
+        line('Cookie bv_email', !!f.email, f.email);
+        line('Cookie bv_city', !!f.city, f.city);
+        line('Событие user_login / user_data в слое', f.events.some(function (e) { return e.event === 'user_login' || e.event === 'user_data'; }));
+
+        box.appendChild(table);
+    }
+
+    function renderVars() {
+        var f = flags();
+        var tbody = document.getElementById('vars');
+        tbody.innerHTML = '';
+
+        row(tbody, ['Собственный файл cookie', 'bv_email', f.email || 'пусто — войдите']);
+        row(tbody, ['Собственный файл cookie', 'bv_city', f.city || 'пусто — войдите']);
+        row(tbody, ['Собственный файл cookie', 'bv_order_total', f.cookies.bv_order_total || 'пусто — оформите заказ']);
+
+        var login = f.events.filter(function (e) { return e.event === 'user_login' || e.event === 'user_data'; }).pop();
+        row(tbody, ['Переменная уровня данных', 'user_login / user_data → user_email', login ? login.user_email : 'пусто — войдите']);
+
+        var price = readDom('#price');
+        row(tbody, ['Элемент DOM', '#price (текст цены)', price || 'на этой странице нет — смотрите карточку товара']);
+
+        var title = readDom('#who');
+        row(tbody, ['Элемент DOM', '#who (заголовок профиля)', title || 'только на странице профиля']);
+    }
+
+    function refresh() {
+        renderState();
+        renderVars();
+    }
+
+    document.getElementById('test-goal').addEventListener('click', function () {
+        if (typeof window.ak_pixel_push !== 'function') {
+            document.getElementById('hint').textContent = 'Пиксель ещё не загрузился — подождите секунду и повторите.';
+            return;
+        }
+        window.ak_pixel_push('test_goal', 42);
+        document.getElementById('hint').textContent = 'Цель test_goal отправлена. Смотрите журнал внизу страницы.';
+    });
+
+    document.getElementById('fill').addEventListener('click', function () {
+        if (!window.BV) return;
+        window.BV.setCookie(window.BV.COOKIE.email, 'demo@example.com', 30);
+        window.BV.setCookie(window.BV.COOKIE.name, 'Демо Посетитель', 30);
+        window.BV.setCookie(window.BV.COOKIE.city, 'msk', 30);
+        window.BV.pushLayer({ event: 'user_login', user_email: 'demo@example.com', user_name: 'Демо Посетитель', user_city: 'msk' });
+        refresh();
+    });
+
+    document.getElementById('reset').addEventListener('click', function () {
+        if (!window.BV) return;
+        window.BV.logout();
+        Object.keys(window.BV.COOKIE).forEach(function (key) {
+            window.BV.delCookie(window.BV.COOKIE[key]);
+        });
+        refresh();
+    });
+
+    refresh();
+    window.setTimeout(refresh, 1500);
+})();
+</script>
+</body>
+</html>

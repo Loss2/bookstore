@@ -51,9 +51,13 @@
 <div class="wrap">
     <a class="back" href="product/index.html">← К товару</a>
     <h1>Оформление заказа</h1>
-    <p class="lead">Форма несёт <code>id="checkout"</code> и уходит на страницу благодарности.</p>
+    <p class="lead">
+        Форма несёт <code>id="checkout"</code>. Сумма приходит из корзины, email и имя — из cookie входа.
+        После отправки сумма записывается в cookie <code>bv_order_total</code>, а страница благодарности
+        читает её оттуда — как на обычном сайте, без параметров в адресе.
+    </p>
 
-    <form id="checkout" method="get" action="thanks.html">
+    <form id="checkout">
         <label for="name">Имя</label>
         <input id="name" name="name" type="text" value="Тестовый покупатель">
 
@@ -63,26 +67,51 @@
         <label for="sum">Сумма заказа, ₽</label>
         <input id="sum" name="sum" type="number" value="1500" readonly>
 
-        <div class="total"><span>К оплате</span><b>1500 ₽</b></div>
+        <div class="total"><span>К оплате</span><b id="total">1500 ₽</b></div>
         <button type="submit">Оформить заказ</button>
     </form>
 
-    <div class="note">
-        Кейс 1, шаг 4: если в триггере «Отправка формы» задать время ожидания активации,
-        переход на следующую страницу задержится — в журнале это видно по времени событий.
+    <div class="note" id="note">
+        Если в триггере «Отправка формы» задать время ожидания активации, переход на следующую страницу
+        задержится — в журнале это видно по времени событий.
     </div>
 </div>
 
-<script>
-    /* Автопроход: checkout.html?auto=hold — форма отправляется, но переход задерживается, чтобы журнал успел записать запрос */
-    if (/[?&]auto=hold/.test(location.search)) {
-        document.getElementById('checkout').addEventListener('submit', function (e) { e.preventDefault(); });
-        setTimeout(function () { document.getElementById('checkout').requestSubmit(); }, 1500);
-    }
-</script>
+
 
 <!-- Журнал событий стенда -->
 <script src="tm-log.js"></script>
 <script src="ac-ident.js"></script>
+<script>
+(function () {
+    var cart = window.BV ? window.BV.cart() : { items: [], total: 0 };
+    var who = window.BV ? window.BV.profile() : { email: '', name: '' };
+    var sum = cart.total || 1500;
+    var hold = /[?&]auto=hold/.test(location.search);
+
+    document.getElementById('sum').value = sum;
+    document.getElementById('total').textContent = sum + ' ₽';
+    if (who.email) document.getElementById('email').value = who.email;
+    if (who.name) document.getElementById('name').value = who.name;
+
+    if (cart.items.length) {
+        var note = document.getElementById('note');
+        note.textContent = 'В корзине: ' + cart.items.map(function (item) {
+            return item.name + ' (' + item.price + ' ₽)';
+        }).join(', ');
+    }
+
+    document.getElementById('checkout').addEventListener('submit', function (event) {
+        event.preventDefault();
+        if (window.BV) {
+            window.BV.saveOrder(sum, 'TM-' + String(Date.now()).slice(-6));
+            window.BV.pushLayer({ event: 'checkout_start', value: sum });
+            window.BV.clearCart();
+        }
+        if (!hold) window.location.href = 'thanks.html';
+    });
+})();
+</script>
+
 </body>
 </html>

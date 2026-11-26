@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход | BookVerse</title>
+
+    <!-- Менеджер тегов Altcraft: контейнер ATM-4ceAGbhFfaZvGHrV7 -->
+    <script>
+    (function (window, document, dataLayerName, containerID) {
+        window[dataLayerName] = window[dataLayerName] || [];
+        window[dataLayerName].push({ 'start': new Date().getTime(), event: 'actm-js' });
+        var firstScript = document.getElementsByTagName('script')[0];
+        var script = document.createElement('script');
+        var dl = dataLayerName !== 'acDataLayer' ? '&l=' + dataLayerName : '';
+        script.async = true;
+        script.src = 'https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/actm/js/actm.js?id=' + containerID + dl;
+        script.type = 'module';
+        if (firstScript && firstScript.parentNode) {
+            firstScript.parentNode.insertBefore(script, firstScript);
+        }
+    }(window, document, 'acDataLayer', 'ATM-4ceAGbhFfaZvGHrV7'));
+    </script>
+    <script src="https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/ak_container.js?id=OHw3"></script>
+
+    <!-- START OF ALTCRAFT PIXEL CODE !-->
+    <script type="text/javascript">
+    !function(){var e={url:"https://pxl-ccrb9qhb8kzxzmmy.dev.altcraft.com/pixel?k=34FyFph%2BVuyDMPiBaQcTvNk7Jg3MJUl1m%2Fqui6fGQJa6XD9SM9jghQ%3D%3D&s=VTcjeau2FX4%3D",goals:"",value:parseFloat("0"),timeout:parseInt("0"),after_scroll:JSON.parse("false"),auto_load:JSON.parse("true")},o=function(o,t,n,a){var d=[].concat(o).map(function(e){return encodeURIComponent(e)}).join(","),c=encodeURIComponent(String(t||0)),i=encodeURIComponent(n.matching_mode||""),r=encodeURIComponent(n.db_id||0),u=encodeURIComponent(JSON.stringify(n.match||{})),l=encodeURIComponent(JSON.stringify(n.update||{}));setTimeout(function(){(new Image).src=[e.url,"goals="+d,"value="+c,"db_id="+r,"mmode="+i,"match="+u,"update="+l].join("&")},a)},t=!1,n=function(){t||(t=!0,e.after_scroll?document.addEventListener("scroll",function(){(window.pageYOffset||document.documentElement.scrollTop>0)&&o(e.goals,e.value,{},e.timeout)},{once: true}):e.auto_load&&o(e.goals,e.value,{},e.timeout))};"complete"===document.readyState||"interactive"===document.readyState?n():window.addEventListener("load",n);window.ak_pixel_push=function(e,t,n,a,d,c){var i=[];Array.isArray(e)?i=e:i[0]=e,o(i,t,{match:n,update:a,matching_mode:d,db_id:c},0)}}();
+    </script>
+    <!-- END OF ALTCRAFT PIXEL CODE !-->
+
+    <link rel="stylesheet" href="../stand.css">
+</head>
+<body>
+<div class="wrap">
+    <div class="top">
+        <a href="../index.html">← BookVerse</a>
+        <a href="account.html">Профиль</a>
+    </div>
+
+    <h1>Вход и регистрация</h1>
+    <p class="lead">
+        Пароль не проверяется — форма нужна для одного: после входа сайт записывает
+        email и город в cookie. Дальше эти значения читает переменная типа
+        «Собственный файл cookie» в Менеджере тегов.
+    </p>
+
+    <form class="card" id="login-form" novalidate>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" value="ivan@example.com" required>
+
+        <label for="name">Имя</label>
+        <input type="text" id="name" name="name" value="Иван Петров">
+
+        <label for="city">Город доставки</label>
+        <select id="city" name="city">
+            <option value="spb">Санкт-Петербург</option>
+            <option value="msk">Москва</option>
+            <option value="kzn">Казань</option>
+        </select>
+
+        <div class="row">
+            <button type="submit">Войти</button>
+            <a class="btn secondary" href="account.html">Посмотреть профиль</a>
+        </div>
+
+        <div class="note">
+            После входа откроется профиль. В нём видно, что именно записано
+            в <code>document.cookie</code> — это те же значения, которые получит
+            переменная Менеджера тегов.
+        </div>
+    </form>
+
+    <div class="card">
+        <h2 style="font-size:16px;margin-bottom:10px">Что произойдёт после входа</h2>
+        <table>
+            <tr><th>Действие</th><th>Где смотреть</th></tr>
+            <tr><td>Cookie <code>bv_email</code>, <code>bv_name</code>, <code>bv_city</code></td><td>Профиль → «Cookie в браузере»</td></tr>
+            <tr><td>Событие <code>user_login</code> в слое данных</td><td>Профиль → «Слой данных»</td></tr>
+            <tr><td>Цель <code>identify</code> с email в <code>match</code></td><td>Журнал событий внизу страницы профиля</td></tr>
+        </table>
+    </div>
+</div>
+
+<script src="../ac-ident.js"></script>
+<script>
+document.getElementById('login-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    var email = document.getElementById('email').value.trim();
+    var name = document.getElementById('name').value.trim();
+    var city = document.getElementById('city').value;
+    if (!email) {
+        document.getElementById('email').focus();
+        return;
+    }
+    if (window.BV) {
+        window.BV.login(email, name, city);
+    }
+    window.setTimeout(function () {
+        window.location.href = 'account.html';
+    }, 400);
+});
+</script>
+</body>
+</html>
