@@ -140,6 +140,28 @@
     box.appendChild(bar); box.appendChild(list);
     document.body.appendChild(box);
 
+    /* Журнал плавающий: освобождаем место внизу страницы, иначе он закрывает контент. */
+    var basePad = null;
+    function reserve() {
+      try {
+        if (basePad === null) basePad = parseFloat(getComputedStyle(document.body).paddingBottom) || 0;
+        var need = box.getBoundingClientRect().height + 24;
+        document.body.style.paddingBottom = Math.max(basePad, need) + 'px';
+      } catch (e) {}
+    }
+    setTimeout(reserve, 0);
+    window.addEventListener('resize', reserve);
+
+    var collapsed = false;
+    title.style.cursor = 'pointer';
+    title.title = 'свернуть журнал';
+    title.addEventListener('click', function () {
+      collapsed = !collapsed;
+      list.style.display = collapsed ? 'none' : '';
+      title.title = collapsed ? 'развернуть журнал' : 'свернуть журнал';
+      reserve();
+    });
+
     return { box: box, list: list, count: count };
   }
 

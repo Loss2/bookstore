@@ -4,7 +4,8 @@ body {
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     color: #1e293b;
     background: #f8fafc;
-    padding: 48px 20px 96px;
+    /* нижний отступ оставляет место плавающему журналу стенда */
+    padding: 48px 20px calc(38vh + 90px);
 }
 .wrap { max-width: 560px; margin: 0 auto; }
 .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
