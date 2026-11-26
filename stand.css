@@ -76,7 +76,7 @@ tr:last-child td { border-bottom: 0; }
 /* Дополнения для страницы проверки кейсов */
 .top .logo { font-weight: 700; color: #1e293b; text-decoration: none; font-size: 16px; }
 .nav-actions { display: flex; gap: 14px; flex-wrap: wrap; }
-.wrap.wide { max-width: 780px; }
+.wrap.wide { max-width: 700px; margin-left: 0; margin-right: auto; }
 .card h2 { font-size: 17px; margin-bottom: 10px; }
 .hint { color: #64748b; font-size: 13px; line-height: 1.55; margin: 10px 0; }
 .banner {
