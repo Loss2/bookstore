@@ -4,6 +4,18 @@
 <meta charset="utf-8">
 <title>Проверка кейсов — Bookverse</title>
 <link rel="stylesheet" href="stand.css">
+<script>
+/* ?clean=1 — скрыть плавающие панели (журнал и карточку посетителя) для скриншотов */
+(function () {
+  if (!/[?&]clean=1/.test(location.search)) return;
+  var css = 'body{padding-bottom:0!important}#tm-log,#bv-panel{display:none!important}'
+          + '.wrap.wide{margin:0 auto!important;max-width:760px!important}';
+  var s = document.createElement('style');
+  s.textContent = css;
+  document.head.appendChild(s);
+}());
+</script>
+
     <!-- Менеджер тегов Altcraft: контейнер ATM-4ceAGbhFfaZvGHrV7 -->
     <script>
     (function (window, document, dataLayerName, containerID) {
